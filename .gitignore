@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+
+/ConsoleApplication1/bin
+/ConsoleApplication1/bin/*
+/ConsoleApplication1/obj
+/ConsoleApplication1/obj/*
+/Emgu.CV.sln
+/.vs
+/.vs/*
+/Emgu.CV.DebuggerVisualizers.sln
