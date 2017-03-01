@@ -44,7 +44,12 @@ namespace ConsoleApplication1
 
         public void ComputeSoilSizes(Mat soilMap)
         {
-            
+
+        }
+
+        internal void DrawPlant(Plant plant)
+        {
+            throw new NotImplementedException();
         }
     }
 }

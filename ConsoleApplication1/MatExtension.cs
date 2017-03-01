@@ -11,6 +11,11 @@ namespace ConsoleApplication1
 {
     public static class MatExtension
     {
+        public static uint GetValueCount(this Mat mat, dynamic value)
+        {
+            return 0;
+        }
+
         public static dynamic GetValue(this Mat mat, int row, int col)
         {
             var value = CreateElement(mat.Depth);

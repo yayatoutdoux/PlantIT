@@ -11,7 +11,7 @@ namespace ConsoleApplication1
     public class Erosion
     {
         public Mat ErodeMap { get; set; }
-        public int Size { get; set; } = 0;
+        public uint Size { get; set; } = 0;
         public List<KeyValuePair<int, Mat>> Erode3D { get; set; }
 
 
@@ -30,7 +30,7 @@ namespace ConsoleApplication1
             {
                 Mat erode = new Mat();
                 level.Value.CopyTo(erode);
-                CvInvoke.Erode(level.Value, erode, plant.Model.Where(x => x.Key == level.Key).Select(x => x.Value).FirstOrDefault(), new Point(1,1), 1, BorderType.Constant, new MCvScalar(0));
+                CvInvoke.Erode(level.Value, erode, plant.Model.Where(x => x.Key == level.Key).Select(x => x.Value).FirstOrDefault(), new Point(1, 1), 1, BorderType.Constant, new MCvScalar(0));
 
                 Erode3D.Add(new KeyValuePair<int, Mat>(level.Key, erode));
             }
@@ -38,6 +38,7 @@ namespace ConsoleApplication1
             foreach (var erode in Erode3D)
             {
                 CvInvoke.BitwiseAnd(ErodeMap, erode.Value, ErodeMap);
+                Size = ErodeMap.GetValueCount((byte)255);
             }
         }
     }

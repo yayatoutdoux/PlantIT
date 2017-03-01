@@ -22,8 +22,9 @@ namespace ConsoleApplication1
         public Erosion Erosion { get; set; } = null;
         public Point? Position { get; set; } = null;
 
-        public Plant(List<KeyValuePair<int, Mat>> model, PlantInteractionModel interaction)
+        public Plant(int id, List<KeyValuePair<int, Mat>> model, PlantInteractionModel interaction)
         {
+            Id = id;
             Model = model;
             Interaction = interaction;
         }

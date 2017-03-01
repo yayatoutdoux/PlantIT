@@ -28,6 +28,14 @@ namespace ConsoleApplication1
         public Placement ComputePacking(Placement placement)
         {
             placement.ComputeErodes();
+            if (!placement.IsAllErodesEmpties)
+            {
+                var localGarden = new List<Garden>();
+                foreach (var plant in placement.Plants.Where(x => x.Position == null))
+                {
+                    var tempPlacement = new Placement(placement);
+                }
+            }
             return null;
         }
 

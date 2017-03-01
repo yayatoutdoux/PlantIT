@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.CodeDom;
+using System.Drawing;
 using System.Linq;
 
 namespace ConsoleApplication1
@@ -12,15 +13,26 @@ namespace ConsoleApplication1
         public uint DimCount { get; set; }
         public uint MaxDim { get; set; }
         public int MinDim { get; set; }
+        public bool IsAllErodesEmpties { get; set; }
 
+        //Copy contructor
+        public Placement(Placement placement)
+        {
+
+        }
+
+        //Create base placement
         public Placement(PlantList plants, Garden garden)
         {
+            //Plants
             Plants = plants;
             ComputeDimInfos(plants);
+
             garden.SetGardenMaps(MinDim, MaxDim);
             Garden = garden;
         }
 
+        //Compute min and max dim of the plant list
         public void ComputeDimInfos(PlantList plants)
         {
             var maxDim = 0;
@@ -40,19 +52,43 @@ namespace ConsoleApplication1
                 if (maxDimLocal > maxDim)
                     maxDim = maxDimLocal;
             }
-            DimCount = (uint) dimCount;
+            DimCount = (uint)dimCount;
             MinDim = minDim;
-            MaxDim = (uint) maxDim;
+            MaxDim = (uint)maxDim;
         }
 
+        //Compute erodes of plants in the garden
         internal void ComputeErodes()
         {
+            var isAllErodesEmpties = true;
             foreach (var plant in Plants)
             {
                 plant.Erosion = new Erosion(plant, Garden);
+                if (plant.Erosion.Size > 0)
+                    isAllErodesEmpties = false;
             }
+            IsAllErodesEmpties = isAllErodesEmpties;
+        }
+
+        //Update erode when plant is added
+        private void UpdateErodes(Plant plant)
+        {
+            var isAllErodesEmpties = true;
+            foreach (var otherPlant in Plants.Where(x => x.Erosion.Size > 0))//TODO only plants not positionned ?
+            {
+                //otherPlant.Erosion.Erode3D
+                if (otherPlant.Erosion.Size > 0)
+                    isAllErodesEmpties = false;
+            }
+            IsAllErodesEmpties = isAllErodesEmpties;
+        }
+
+        public void Place(Placement placement, Plant plant, Point position)
+        {
+            plant.Position = position;
+            placement.Garden.DrawPlant(plant);
+            placement.UpdateErodes(plant);
         }
     }
 }
 
- 

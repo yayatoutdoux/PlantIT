@@ -43,7 +43,7 @@ namespace ConsoleApplication1
             model1.Add(new KeyValuePair<int, Mat>(-1, plantMap1));
             model1.Add(new KeyValuePair<int, Mat>(1, plantMap1));
             model1 = model1.OrderBy(o => o.Key).ToList();
-            var plant1 = new Plant(model1, null);
+            var plant1 = new Plant(1, model1, null);
 
             //p2
             var model2 = new List<KeyValuePair<int, Mat>>();
@@ -54,9 +54,9 @@ namespace ConsoleApplication1
             model2.Add(new KeyValuePair<int, Mat>(1, plantMap2));
             model2 = model2.OrderBy(o => o.Key).ToList();
 
-            var plant2 = new Plant(model2, null);
+            var plant2 = new Plant(2, model2, null);
 
-            var plantList = new PlantList() {plant1, plant2};
+            var plantList = new PlantList() { plant1, plant2 };
 
             //Packing
             var packing = new Packing(plantList, garden);
@@ -105,7 +105,7 @@ namespace ConsoleApplication1
                 {
                     for (int j = 0; j < 100; j++)
                     {
-                        img.SetValue(i, j, (byte) 255);
+                        img.SetValue(i, j, (byte)255);
                     }
                     CvInvoke.Imwrite("C:\\jj\\img_" + k + " " + i + ".jpg", img);
                 }
