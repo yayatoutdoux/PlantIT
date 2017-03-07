@@ -43,7 +43,7 @@ namespace ConsoleApplication1
             model1.Add(new KeyValuePair<int, Mat>(-1, plantMap1));
             model1.Add(new KeyValuePair<int, Mat>(1, plantMap1));
             model1 = model1.OrderBy(o => o.Key).ToList();
-            var plant1 = new Plant(1, model1, null);
+            var plant1 = new Plant(1, model1);
 
             //p2
             var model2 = new List<KeyValuePair<int, Mat>>();
@@ -54,21 +54,12 @@ namespace ConsoleApplication1
             model2.Add(new KeyValuePair<int, Mat>(1, plantMap2));
             model2 = model2.OrderBy(o => o.Key).ToList();
 
-            var plant2 = new Plant(2, model2, null);
+            var plant2 = new Plant(2, model2);
 
             var plantList = new PlantList() { plant1, plant2 };
 
             //Packing
             var packing = new Packing(plantList, garden);
-
-
-            PrintInWindows("test", packing.BasePlacement.Plants.First().Erosion.ErodeMap);
-            Console.WriteLine(packing.BasePlacement.Plants.Count);
-            foreach (var erode in packing.BasePlacement.Plants.First().Erosion.Erode3D)
-            {
-                PrintInWindows("to", erode.Value);
-
-            }
 
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 
 namespace ConsoleApplication1
@@ -13,6 +14,7 @@ namespace ConsoleApplication1
         public uint MaxDim { get; set; }
         public int MinDim { get; set; }
         public bool IsAllErodesEmpties { get; set; }
+        public uint PlacedPlantCount { get; set; } = 0;
 
         #endregion
 
@@ -58,24 +60,36 @@ namespace ConsoleApplication1
         private void UpdateErodes(Plant plant)
         {
             var isAllErodesEmpties = true;
+            //foreach plant with erosion
             foreach (var otherPlant in Plants.Where(x => x.Erosion.Size > 0))//TODO only plants not positionned ?
             {
-                //otherPlant.Erosion.Erode3D
+                //Si plant placée est sur erode ou êrturb erode suppr erode
+                plant.Erosion = new Erosion(plant, Garden);
                 if (otherPlant.Erosion.Size > 0)
                     isAllErodesEmpties = false;
             }
             IsAllErodesEmpties = isAllErodesEmpties;
         }
+
+
+        #endregion
+
+        #region place
+        public void Place(Plant plant, Point position)
+        {
+            plant.Position = position;
+            plant.PositionOrder = PlacedPlantCount++;
+            Garden.DrawPlant(plant, this);
+            UpdateErodes(plant);
+        }
+
+        internal void Place(Placement bestPlacement)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region other
-        public void Place(Placement placement, Plant plant, Point position)
-        {
-            plant.Position = position;
-            placement.Garden.DrawPlant(plant);
-            placement.UpdateErodes(plant);
-        }
-
         //Compute min and max dim of the plant list
         public void ComputeDimInfos(PlantList plants)
         {
