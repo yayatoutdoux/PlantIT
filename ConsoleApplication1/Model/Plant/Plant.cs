@@ -12,7 +12,7 @@ namespace ConsoleApplication1
         public Graphic Graphic { get; set; }
 
         //Models
-        public List<KeyValuePair<int, Mat>> Model { get; set; }
+        public List<Mat> Model { get; set; }
 
         //Other info
         public TimeLine TimeLine { get; set; } = null;
@@ -25,10 +25,9 @@ namespace ConsoleApplication1
         #endregion
 
         #region ctor
-        public Plant(int id, List<KeyValuePair<int, Mat>> model)
+        public Plant()
         {
-            Id = id;
-            Model = model;
+
         }
         #endregion
     }

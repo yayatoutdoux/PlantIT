@@ -12,7 +12,7 @@ namespace ConsoleApplication1
     {
         static void Main(string[] args)
         {
-            Test1();
+            //Test1();
             Console.WriteLine();
             Console.WriteLine();
             Console.ReadLine();
@@ -36,31 +36,17 @@ namespace ConsoleApplication1
 
             //Plants
             //p1
-            var model1 = new List<KeyValuePair<int, Mat>>();
             var k = 1;
             var plantMap1 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
-            model1.Add(new KeyValuePair<int, Mat>(0, plantMap1));
-            model1.Add(new KeyValuePair<int, Mat>(-1, plantMap1));
-            model1.Add(new KeyValuePair<int, Mat>(1, plantMap1));
-            model1 = model1.OrderBy(o => o.Key).ToList();
-            var plant1 = new Plant(1, model1);
+            var plant1 = new Plant() {Model = new List<Mat>() { plantMap1 } };
 
             //p2
-            var model2 = new List<KeyValuePair<int, Mat>>();
             k = 2;
             var plantMap2 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
-            model2.Add(new KeyValuePair<int, Mat>(0, plantMap2));
-            model2.Add(new KeyValuePair<int, Mat>(-1, plantMap2));
-            model2.Add(new KeyValuePair<int, Mat>(1, plantMap2));
-            model2 = model2.OrderBy(o => o.Key).ToList();
-
-            var plant2 = new Plant(2, model2);
-
-            var plantList = new PlantList() { plant1, plant2 };
+            var plant2 = new Plant() { Model = new List<Mat>() { plantMap2 } };
 
             //Packing
-            var packing = new Packing(plantList, garden);
-
+            var packing = new Packing(new List<Plant> { plant1, plant2 }, garden);
         }
 
         public static void StructuringElement()

@@ -51,14 +51,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MatExtension.cs" />
-    <Compile Include="Model\Plant\PlantGroup.cs" />
     <Compile Include="Model\Garden\Garden.cs" />
     <Compile Include="Model\Tools\Graphic.cs" />
     <Compile Include="Model\Tools\TimeLine.cs" />
     <Compile Include="Model\Tools\GpsPosition.cs" />
     <Compile Include="Model\Plant\Plant.cs" />
-    <Compile Include="Erode\Erosion.cs" />
-    <Compile Include="Packing\Placement.cs" />
+    <Compile Include="Model\Erode\Erosion.cs" />
+    <Compile Include="Model\Tree\PlacementTree.cs" />
+    <Compile Include="Model\Tree\PlacementNode.cs" />
     <Compile Include="Packing\Packing.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
