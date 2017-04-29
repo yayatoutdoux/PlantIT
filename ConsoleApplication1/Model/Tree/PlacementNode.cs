@@ -2,9 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 
 namespace ConsoleApplication1
 {
@@ -16,8 +19,8 @@ namespace ConsoleApplication1
         public List<PlacementNode> Parents { get; set; }
         public List<Plant> PlantsToPlace { get; set; }
         public List<Plant> PlantsPlaced { get; set; }
-        public KeyValuePair<Plant, Point> Positions { get; set; }
-        public KeyValuePair<Plant, Erosion> Erosions { get; set; }
+        public Dictionary<Plant, Point> Positions { get; set; }
+        public Dictionary<Plant, Erosion> Erosions { get; set; }
         public Mat Placement { get; set; }
         public PlacementTree Tree { get; set; }
         public Garden Garden { get; set; }
@@ -30,13 +33,13 @@ namespace ConsoleApplication1
 
         #region ctor
         //Copy contructor
-        public PlacementNode(PlacementNode PlacementNode)
+        public PlacementNode(PlacementNode placementNode)
         {
-            Garden = PlacementNode.Garden;
-            DimCount = PlacementNode.DimCount;
-            MaxDim = PlacementNode.MaxDim;
-            MinDim = PlacementNode.MinDim;
-            IsAllErodesEmpties = PlacementNode.IsAllErodesEmpties;
+            Garden = placementNode.Garden;
+            DimCount = placementNode.DimCount;
+            MaxDim = placementNode.MaxDim;
+            MinDim = placementNode.MinDim;
+            IsAllErodesEmpties = placementNode.IsAllErodesEmpties;
         }
 
         //Create base PlacementNode
@@ -51,47 +54,61 @@ namespace ConsoleApplication1
             //Fill Plant list
             PlantsToPlace = plantList;
             PlantsPlaced = new List<Plant>();
-            Positions = new KeyValuePair<Plant, Point>();
+            Positions = new Dictionary<Plant, Point>();
             Garden = garden;
 
             //Placement
             Placement = CreatePlacement();
 
             //Erode
-            Erosions = ComputeErodes();
+            //Erosions = ComputeErodes();
         }
 
         private Mat CreatePlacement()
         {
+            //Create 10 channel Mat
             var placement = new Mat(
                 Garden.SoilMap.Size,
                 DepthType.Cv32S,
                 10
             );
-            //Fill placement
-            for (int i = 1; i < placement.Size.Height; i++)
+            var placements = new VectorOfMat();
+
+            CvInvoke.Split(placement, placements);
+            for (int i = 0; i < placements.Size; i++)
             {
-                for (int j = 1; j < placement.Size.Width; j++)
+                placements[i].SetTo(new MCvScalar(0));
+                for (int j = 0; j < placements[i].Height; j++)
                 {
-                    placement.SetValue(i, j, Garden.SoilMap.GetValue(i, j) == 255 ? int.MaxValue : 0);
+                    for (int k = 0; k < placements[i].Width; k++)
+                    {
+                        if (Garden.SoilMap.GetValue(i, j) == (byte) 255)
+                        {
+                            placements[i].SetValue(i, j, int.MaxValue);
+                        }
+                    }
                 }
             }
-            return placement;
+
+            CvInvoke.Merge(placements, placement);
+            return placement; 
         }
         #endregion
 
         #region erode
         //Compute erodes of plants in the garden
-        internal KeyValuePair<Plant, Erosion> ComputeErodes()
+        internal Dictionary<Plant, Erosion> ComputeErodes()
         {
-
-            foreach (var plant in Plants)
+            var erosions = new Dictionary<Plant, Erosion>();
+            var isAllErodesEmpties = true;
+            foreach (var plant in PlantsToPlace.Concat(PlantsPlaced))
             {
-                plant.Erosion = new Erosion(plant, Garden);
-                if (plant.Erosion.Size > 0)
+                erosions[plant] = new Erosion(plant, Garden);
+                if (erosions[plant].Size > 0)
                     isAllErodesEmpties = false;
             }
             IsAllErodesEmpties = isAllErodesEmpties;
+            return erosions;
         }
 
         //Update erode when plant is added
@@ -117,7 +134,6 @@ namespace ConsoleApplication1
         {
             plant.Position = position;
             plant.PositionOrder = PlacedPlantCount++;
-            Garden.DrawPlant(plant, this);
             UpdateErodes(plant);
         }
 
@@ -134,7 +150,7 @@ namespace ConsoleApplication1
             var maxDim = 0;
             var minDim = 0;
             var dimCount = 0;
-            foreach (var plant in plants)
+            /*foreach (var plant in plants)
             {
                 var keys = plant.Model.Select(x => x.Key);
                 var dimCountLocal = plant.Model.Count;
@@ -147,7 +163,7 @@ namespace ConsoleApplication1
                 var maxDimLocal = keys.Max();
                 if (maxDimLocal > maxDim)
                     maxDim = maxDimLocal;
-            }
+            }*/
             DimCount = (uint)dimCount;
             MinDim = minDim;
             MaxDim = (uint)maxDim;

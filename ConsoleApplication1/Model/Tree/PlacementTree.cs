@@ -19,6 +19,7 @@ namespace ConsoleApplication1
         public PlacementTree(Garden garden, List<Plant> plantList)
         {
             //Create first node
+            Nodes = new List<PlacementNode>();
             var node = new PlacementNode(garden, plantList, this);
             Nodes.Add(node);
             CurrentNode = node;

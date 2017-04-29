@@ -12,8 +12,7 @@ namespace ConsoleApplication1
     {
         #region properties
         //0 : no placable, 255 : placable, not evalued, 100 - 200 plants ids
-        public Mat Erode { get; set; }
-        public List<KeyValuePair<int, Mat>> Erode3D { get; set; }
+        public Mat ErodeMap { get; set; }
 
         public List<Point> ErodePoints { get; set; }
         public int Size { get; set; } = 0;
@@ -23,43 +22,20 @@ namespace ConsoleApplication1
         #region ctor
         public Erosion(Plant plant, Garden garden)
         {
-            Erode3D = new List<KeyValuePair<int, Mat>>();
+            //Create erode map
             ErodePoints = new List<Point>();
-            //ErodeMap = new Mat(garden.SoilMap.Rows, garden.SoilMap.Cols, DepthType.Cv8U, 1);
-            //ErodeMap.SetTo(new MCvScalar(255));
+            ErodeMap = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 10);
+            ErodeMap.SetTo(new MCvScalar(0));
 
-            /*foreach (var level in garden.Model)
+            for (int i = 0; i < 9; i++)
             {
-                var erode = new Mat(
-                    new Size(level.Value.Cols, level.Value.Rows), 
-                    DepthType.Cv8U, 
-                    1
-                );
-                erode.SetTo(new MCvScalar(0));
                 
-                //tresh
-
-                CvInvoke.Erode(level.Value, erode,
-                    plant.Model.Where(x => x.Key == level.Key).Select(x => x.Value).FirstOrDefault(), new Point(1, 1), 1,
-                    BorderType.Constant, new MCvScalar(0));
-
-                //Compute points
-                for (int i = 0; i < erode.Cols; i++)
-                {
-                    for (int j = 0; j < erode.Rows; j++)
-                    {
-                        if (erode.GetValue(i, j) == 255)
-                            ErodePoints.Add(new Point(i, j));
-                    }
-                }
-
-                Erode3D.Add(new KeyValuePair<int, Mat>(level.Key, erode));
             }
 
-            foreach (var erode in Erode3D)
-            {
-                CvInvoke.BitwiseAnd(ErodeMap, erode.Value, ErodeMap);
-            }*/
+            //CvInvoke.Erode(garden.SoilMap, ErodeMap,
+            //    , new Point(1, 1), 1,
+            //    BorderType.Constant, new MCvScalar(0));
+
 
         }
     }

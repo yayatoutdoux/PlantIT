@@ -12,7 +12,7 @@ namespace ConsoleApplication1
     {
         static void Main(string[] args)
         {
-            //Test1();
+            Test1();
             Console.WriteLine();
             Console.WriteLine();
             Console.ReadLine();
@@ -47,6 +47,8 @@ namespace ConsoleApplication1
 
             //Packing
             var packing = new Packing(new List<Plant> { plant1, plant2 }, garden);
+            var split = packing.Tree.Nodes.First().Placement.Split();
+            PrintInWindows("fgge", split[1]);
         }
 
         public static void StructuringElement()
@@ -57,7 +59,6 @@ namespace ConsoleApplication1
             PrintInWindows("ji^nijpnjpi", mat);
         }
 
-
         public static void PrintInWindows(string name, Mat mat)
         {
             CvInvoke.NamedWindow(name);
@@ -65,7 +66,6 @@ namespace ConsoleApplication1
             CvInvoke.WaitKey(0);
             CvInvoke.DestroyWindow(name);
         }
-
 
         public void GenerrateRect()
         {
