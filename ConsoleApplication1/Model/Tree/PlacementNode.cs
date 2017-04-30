@@ -82,9 +82,9 @@ namespace ConsoleApplication1
                 {
                     for (int k = 0; k < placements[i].Width; k++)
                     {
-                        if (Garden.SoilMap.GetValue(i, j) == (byte) 255)
+                        if (Garden.SoilMap.GetValue(j, k) == (byte) 255)
                         {
-                            placements[i].SetValue(i, j, int.MaxValue);
+                            placements[i].SetValue(j, k, int.MaxValue);
                         }
                     }
                 }
