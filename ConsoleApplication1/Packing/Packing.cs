@@ -35,7 +35,21 @@ namespace ConsoleApplication1
             {
                 foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
                 {
-                    
+                    var map = erosion.Value.ErodeMap;
+                    for (var j = 0; j < map.Height; j++)
+                    {
+                        for (var k = 0; k < map.Width; k++)
+                        {
+                            if (map.GetValue(j, k) == (byte)255)
+                            {
+                                var node = new PlacementNode(currentNode);
+                                node.Place(erosion.Key, new Point(j, k));
+                                Tree.Add(node);
+                                //BT
+                                Tree.CurrentNode = node;
+                            }
+                        }
+                    }
                 }
             }
             return null;
