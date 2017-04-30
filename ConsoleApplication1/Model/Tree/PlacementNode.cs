@@ -70,7 +70,7 @@ namespace ConsoleApplication1
             var placement = new Mat(
                 Garden.SoilMap.Size,
                 DepthType.Cv32S,
-                10
+                Constants.SoilLayerCount
             );
             var placements = new VectorOfMat();
 
@@ -99,7 +99,7 @@ namespace ConsoleApplication1
         }
         #endregion
 
-        #region erode
+        #region Erode
         //Compute erodes of plants in the garden
         internal Dictionary<Plant, Erosion> ComputeErodes()
         {
@@ -129,11 +129,9 @@ namespace ConsoleApplication1
             }*/
             IsAllErodesEmpties = isAllErodesEmpties;
         }
-
-
         #endregion
 
-        #region place
+        #region Place
         public void Place(Plant plant, Point position)
         {
             plant.Position = position;
@@ -147,7 +145,7 @@ namespace ConsoleApplication1
         }
         #endregion
 
-        #region other
+        #region Other
         //Compute min and max dim of the plant list
         public void ComputeDimInfos(List<Plant> plants)
         {

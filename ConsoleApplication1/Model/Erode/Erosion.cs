@@ -12,12 +12,9 @@ namespace ConsoleApplication1
     public class Erosion
     {
         #region properties
-        //0 : no placable, 255 : placable, not evalued, 100 - 200 plants ids
         public Mat ErodeMap { get; set; }
-
         public List<Point> ErodePoints { get; set; }
         public int Size { get; set; } = 0;
-
         #endregion
 
         #region ctor
@@ -28,7 +25,7 @@ namespace ConsoleApplication1
             ErodeMap = new Mat(
                 placement.Size,
                 DepthType.Cv8U,
-                10
+                Constants.SoilLayerCount
             );
             var erosions = new VectorOfMat();
             CvInvoke.Split(ErodeMap, erosions);

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Emgu.CV.Cuda;
 
 namespace ConsoleApplication1
 {
@@ -21,14 +22,22 @@ namespace ConsoleApplication1
             Garden = garden;
             PlantList = plantList;
             Tree = new PlacementTree(garden, plantList);
+            ComputePacking();
         }
         #endregion
 
         #region other
-        public static PlacementNode ComputePacking(PlacementNode PlacementNode)
+        public PlacementNode ComputePacking()
         {
-            PlacementNode.ComputeErodes();
-
+            //FastTest
+            var currentNode = Tree.CurrentNode;
+            while (currentNode.PlantsToPlace.Count != 0 && currentNode.IsAllErodesEmpties)
+            {
+                foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
+                {
+                    
+                }
+            }
             return null;
         }
         
