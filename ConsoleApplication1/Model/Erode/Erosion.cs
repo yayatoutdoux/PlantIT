@@ -4,6 +4,7 @@ using System.Linq;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 
 namespace ConsoleApplication1
 {
@@ -20,23 +21,39 @@ namespace ConsoleApplication1
         #endregion
 
         #region ctor
-        public Erosion(Plant plant, Garden garden)
+        public Erosion(Plant plant, Mat placement)
         {
             //Create erode map
             ErodePoints = new List<Point>();
-            ErodeMap = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 10);
-            ErodeMap.SetTo(new MCvScalar(0));
+            ErodeMap = new Mat(
+                placement.Size,
+                DepthType.Cv8U,
+                10
+            );
+            var erosions = new VectorOfMat();
+            CvInvoke.Split(ErodeMap, erosions);
 
-            for (int i = 0; i < 9; i++)
+            var placements = new VectorOfMat();
+            CvInvoke.Split(placement, placements);
+
+            for (var i = 0; i < erosions.Size; i++)
             {
-                
+                erosions[i].SetTo(new MCvScalar(0));
+                for (var j = 0; j < erosions[i].Height; j++)
+                {
+                    for (var k = 0; k < erosions[i].Width; k++)
+                    {
+                        if (placements[i].GetValue(j, k) == int.MaxValue)
+                        {
+                            erosions[i].SetValue(j, k, (byte)255);
+                        }
+                    }
+                }
+                CvInvoke.Erode(erosions[i], erosions[i], plant.Model.First()
+                    , new Point(1, 1), 1,
+                    BorderType.Constant, new MCvScalar(0));
             }
-
-            //CvInvoke.Erode(garden.SoilMap, ErodeMap,
-            //    , new Point(1, 1), 1,
-            //    BorderType.Constant, new MCvScalar(0));
-
-
+            CvInvoke.Merge(erosions, ErodeMap);
         }
     }
     #endregion

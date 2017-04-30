@@ -61,7 +61,7 @@ namespace ConsoleApplication1
             Placement = CreatePlacement();
 
             //Erode
-            //Erosions = ComputeErodes();
+            Erosions = ComputeErodes();
         }
 
         private Mat CreatePlacement()
@@ -75,12 +75,15 @@ namespace ConsoleApplication1
             var placements = new VectorOfMat();
 
             CvInvoke.Split(placement, placements);
-            for (int i = 0; i < placements.Size; i++)
+
+            placements[0].SetTo(new MCvScalar(int.MaxValue));
+            
+            for (var i = 1; i < placements.Size; i++)
             {
                 placements[i].SetTo(new MCvScalar(0));
-                for (int j = 0; j < placements[i].Height; j++)
+                for (var j = 0; j < placements[i].Height; j++)
                 {
-                    for (int k = 0; k < placements[i].Width; k++)
+                    for (var k = 0; k < placements[i].Width; k++)
                     {
                         if (Garden.SoilMap.GetValue(j, k) == (byte) 255)
                         {
@@ -88,6 +91,7 @@ namespace ConsoleApplication1
                         }
                     }
                 }
+                CvInvoke.BitwiseAnd(placements[i], placements[0], placements[0]);
             }
 
             CvInvoke.Merge(placements, placement);
@@ -103,7 +107,7 @@ namespace ConsoleApplication1
             var isAllErodesEmpties = true;
             foreach (var plant in PlantsToPlace.Concat(PlantsPlaced))
             {
-                erosions[plant] = new Erosion(plant, Garden);
+                erosions[plant] = new Erosion(plant, Placement);
                 if (erosions[plant].Size > 0)
                     isAllErodesEmpties = false;
             }

@@ -38,16 +38,16 @@ namespace ConsoleApplication1
             //p1
             var k = 1;
             var plantMap1 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
-            var plant1 = new Plant() {Model = new List<Mat>() { plantMap1 } };
+            var plant1 = new Plant {Model = new List<Mat> { plantMap1 } };
 
             //p2
-            k = 2;
+            k = 1;
             var plantMap2 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
-            var plant2 = new Plant() { Model = new List<Mat>() { plantMap2 } };
+            var plant2 = new Plant { Model = new List<Mat> { plantMap2 } };
 
             //Packing
             var packing = new Packing(new List<Plant> { plant1, plant2 }, garden);
-            var split = packing.Tree.Nodes.First().Placement.Split();
+            var split = packing.Tree.Nodes.First().Erosions[plant1].ErodeMap.Split();
             PrintInWindows("fgge", split[1]);
         }
 
