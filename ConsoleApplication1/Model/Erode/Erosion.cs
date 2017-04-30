@@ -35,7 +35,7 @@ namespace ConsoleApplication1
                 {
                     for (var k = 0; k < ErodeMap[i].Width; k++)
                     {
-                        if (placements[i].GetValue(j, k) == int.MaxValue)
+                        if (placements[i].GetValue(j, k) != 0)
                         {
                             ErodeMap[i].SetValue(j, k, (byte)255);
                         }

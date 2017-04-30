@@ -47,7 +47,15 @@ namespace ConsoleApplication1
             PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
             PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
             Placement = new Mat[Constants.SoilLayerCount];
-            //for()
+            for (int i = 0; i < Placement.Length; i++)
+            {
+                Placement[i] = new Mat(
+                    Garden.SoilMap.Size,
+                    DepthType.Cv32S,
+                    1
+                );
+                placementNode.Placement[i].CopyTo(Placement[i]);
+            }
             Erosions = new Dictionary<Plant, Erosion>(placementNode.Erosions);
             Tree = placementNode.Tree;
             IsAllErodesEmpties = true;
@@ -87,8 +95,14 @@ namespace ConsoleApplication1
                     DepthType.Cv32S,
                     1
                 );
+
+                if (i == 0)
+                {
+                    placements[i].SetTo(new MCvScalar(int.MaxValue));
+                    continue;
+                }
                 placements[i].SetTo(new MCvScalar(0));
-                if(i == 0) continue;
+
                 for (var j = 0; j < placements[i].Height; j++)
                 {
                     for (var k = 0; k < placements[i].Width; k++)
@@ -139,30 +153,25 @@ namespace ConsoleApplication1
 
         private void PutInPlacement(Plant plant, Point position)
         {
-            //add 
-            var placements = new VectorOfMat();
-
-
-            for (var i = 0; i < placements.Size; i++)
+            for (var i = 0; i < Placement.Length; i++)
             {
-                for (var j = 0; j < placements[i].Height; j++)
+                for (var j = 0; j < Placement[i].Height; j++)
                 {
-                    for (var k = 0; k < placements[i].Width; k++)
+                    for (var k = 0; k < Placement[i].Width; k++)
                     {
                         //TODO
                         if (position.X == j && position.Y == k)
                         {
-                            placements[i].SetValue(j, k, plant.Id);
-                            placements[i].SetValue(j, k + 1, plant.Id);
-                            placements[i].SetValue(j, k + 2, plant.Id);
-                            placements[i].SetValue(j + 2, k, plant.Id);
-                            placements[i].SetValue(j + 2, k + 1, plant.Id);
-                            placements[i].SetValue(j + 2, k + 2, plant.Id);
-                            placements[i].SetValue(j + 1, k, plant.Id);
-                            placements[i].SetValue(j + 1, k + 2, plant.Id);
-                            placements[i].SetValue(j + 1, k + 1, plant.Id);
+                            Placement[i].SetValue(j, k, plant.Id);
+                            Placement[i].SetValue(j, k + 1, plant.Id);
+                            Placement[i].SetValue(j, k + 2, plant.Id);
+                            Placement[i].SetValue(j + 2, k, plant.Id);
+                            Placement[i].SetValue(j + 2, k + 1, plant.Id);
+                            Placement[i].SetValue(j + 2, k + 2, plant.Id);
+                            Placement[i].SetValue(j + 1, k, plant.Id);
+                            Placement[i].SetValue(j + 1, k + 2, plant.Id);
+                            Placement[i].SetValue(j + 1, k + 1, plant.Id);
                         }
-                        
                     }
                 }
             }
@@ -172,8 +181,6 @@ namespace ConsoleApplication1
         {
             ComputeErodes();
         }
-
-
         #endregion
 
         #region Other

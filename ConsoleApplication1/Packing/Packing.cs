@@ -13,6 +13,7 @@ namespace ConsoleApplication1
         public List<Plant> PlantList { get; set; }
         public Garden Garden { get; set; }
         public PlacementTree Tree { get; set; }
+        public PlacementNode FinalNode { get; set; }
 
         #endregion
 
@@ -22,7 +23,7 @@ namespace ConsoleApplication1
             Garden = garden;
             PlantList = plantList;
             Tree = new PlacementTree(garden, plantList);
-            ComputePacking();
+            FinalNode = ComputePacking();
         }
         #endregion
 
@@ -36,20 +37,22 @@ namespace ConsoleApplication1
                 foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
                 {
                     var map = erosion.Value.ErodeMap;
-                    for (var j = 0; j < map[0].Height; j++)
+                    for (var j = 0; j < map[0].Height/200; j++)
                     {
-                        for (var k = 0; k < map[0].Width; k++)
+                        for (var k = 0; k < map[0].Width/200; k++)
                         {
                             if (map[0].GetValue(j, k) == (byte)255)
                             {
                                 var node = new PlacementNode(currentNode);
-                                node.Place(erosion.Key, new Point(j, k));
+                                //node.Place(erosion.Key, new Point(j, k));
                                 Tree.Add(node);
                                 //BT
                             }
                         }
                     }
                 }
+                if (Tree.CurrentNode.Childrens.FirstOrDefault() == null)
+                    return currentNode;
                 currentNode = Tree.CurrentNode.Childrens.FirstOrDefault();
             }
             return null;
