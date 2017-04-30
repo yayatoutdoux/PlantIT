@@ -12,44 +12,39 @@ namespace ConsoleApplication1
     {
         #region properties
         public Mat[] ErodeMap { get; set; }
-        public List<Point> ErodePoints { get; set; }
+        //public List<Point> ErodePoints { get; set; }
         public int Size { get; set; } = 0;
         #endregion
 
         #region ctor
         public Erosion(Plant plant, Mat[] placements)
         {
+            ErodeMap = new Mat[Constants.SoilLayerCount];
             //Create erode map
-            ErodePoints = new List<Point>();
-            ErodeMap = new Mat(
-                placement.Size,
-                DepthType.Cv8U,
-                Constants.SoilLayerCount
-            );
-            var erosions = new VectorOfMat();
-            CvInvoke.Split(ErodeMap, erosions);
-
-            var placements = new VectorOfMat();
-            CvInvoke.Split(placement, placements);
-
-            for (var i = 0; i < erosions.Size; i++)
+            
+            for (var i = 0; i < ErodeMap.Length; i++)
             {
-                erosions[i].SetTo(new MCvScalar(0));
-                for (var j = 0; j < erosions[i].Height; j++)
+                ErodeMap[i] = new Mat(
+                    placements[0].Size,
+                    DepthType.Cv8U,
+                    1
+                );
+                ErodeMap[i].SetTo(new MCvScalar(0));
+
+                for (var j = 0; j < ErodeMap[i].Height; j++)
                 {
-                    for (var k = 0; k < erosions[i].Width; k++)
+                    for (var k = 0; k < ErodeMap[i].Width; k++)
                     {
                         if (placements[i].GetValue(j, k) == int.MaxValue)
                         {
-                            erosions[i].SetValue(j, k, (byte)255);
+                            ErodeMap[i].SetValue(j, k, (byte)255);
                         }
                     }
                 }
-                CvInvoke.Erode(erosions[i], erosions[i], plant.Model.First()
+                CvInvoke.Erode(ErodeMap[i], ErodeMap[i], plant.Model.First()
                     , new Point(1, 1), 1,
                     BorderType.Constant, new MCvScalar(0));
             }
-            CvInvoke.Merge(erosions, ErodeMap);
         }
     }
     #endregion

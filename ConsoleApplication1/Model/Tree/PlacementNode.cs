@@ -80,16 +80,15 @@ namespace ConsoleApplication1
             //Create 10 channel Mat
             var placements = new Mat[Constants.SoilLayerCount];
             
-            placements[0].SetTo(new MCvScalar(int.MaxValue));
-            
-            for (var i = 1; i < Constants.SoilLayerCount; i++)
+            for (var i = 0; i < Constants.SoilLayerCount; i++)
             {
                 placements[i] = new Mat(
                     Garden.SoilMap.Size,
                     DepthType.Cv32S,
-                    Constants.SoilLayerCount
+                    1
                 );
                 placements[i].SetTo(new MCvScalar(0));
+                if(i == 0) continue;
                 for (var j = 0; j < placements[i].Height; j++)
                 {
                     for (var k = 0; k < placements[i].Width; k++)
@@ -143,7 +142,6 @@ namespace ConsoleApplication1
             //add 
             var placements = new VectorOfMat();
 
-            CvInvoke.Split(Placement, placements);
 
             for (var i = 0; i < placements.Size; i++)
             {
@@ -168,8 +166,6 @@ namespace ConsoleApplication1
                     }
                 }
             }
-
-            CvInvoke.Merge(placements, Placement);
         }
 
         private void UpdateErosion(Plant plant, Point position)

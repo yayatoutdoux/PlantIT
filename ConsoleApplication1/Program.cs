@@ -47,8 +47,7 @@ namespace ConsoleApplication1
 
             //Packing
             var packing = new Packing(new List<Plant> { plant1, plant2 }, garden);
-            var split = packing.Tree.Nodes.First().Erosions[plant1].ErodeMap.Split();
-            PrintInWindows("fgge", split[1]);
+            
         }
 
         public static void StructuringElement()
