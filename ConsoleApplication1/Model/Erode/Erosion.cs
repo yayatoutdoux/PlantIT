@@ -8,17 +8,16 @@ using Emgu.CV.Util;
 
 namespace ConsoleApplication1
 {
-
     public class Erosion
     {
         #region properties
-        public Mat ErodeMap { get; set; }
+        public Mat[] ErodeMap { get; set; }
         public List<Point> ErodePoints { get; set; }
         public int Size { get; set; } = 0;
         #endregion
 
         #region ctor
-        public Erosion(Plant plant, Mat placement)
+        public Erosion(Plant plant, Mat[] placements)
         {
             //Create erode map
             ErodePoints = new List<Point>();

@@ -31,7 +31,7 @@ namespace ConsoleApplication1
         {
             //FastTest
             var currentNode = Tree.CurrentNode;
-            while (currentNode.PlantsToPlace.Count != 0 && currentNode.IsAllErodesEmpties)
+            while (currentNode.PlantsToPlace.Count != 0 || currentNode.IsAllErodesEmpties)
             {
                 foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
                 {
@@ -46,11 +46,12 @@ namespace ConsoleApplication1
                                 node.Place(erosion.Key, new Point(j, k));
                                 Tree.Add(node);
                                 //BT
-                                Tree.CurrentNode = node;
+                                break;
                             }
                         }
                     }
                 }
+                currentNode = Tree.CurrentNode.Childrens.First();
             }
             return null;
         }

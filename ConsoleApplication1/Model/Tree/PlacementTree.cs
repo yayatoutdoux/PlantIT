@@ -29,7 +29,6 @@ namespace ConsoleApplication1
         public void Add(PlacementNode nodeToPlace, PlacementNode nodeParent = null)
         {
             Nodes.Add(nodeToPlace);
-            CurrentNode = nodeToPlace;
         }
     }
 }

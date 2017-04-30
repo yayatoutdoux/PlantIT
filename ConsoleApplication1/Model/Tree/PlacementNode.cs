@@ -21,14 +21,14 @@ namespace ConsoleApplication1
         public List<Plant> PlantsPlaced { get; set; }
         public Dictionary<Plant, Point> Positions { get; set; }
         public Dictionary<Plant, Erosion> Erosions { get; set; }
-        public Mat Placement { get; set; }
+        public Mat[] Placement { get; set; }
         public PlacementTree Tree { get; set; }
         public Garden Garden { get; set; }
         public uint DimCount { get; set; }
         public uint MaxDim { get; set; }
         public int MinDim { get; set; }
         public bool IsAllErodesEmpties { get; set; }
-        public uint PlacedPlantCount { get; set; } = 0;
+        public uint PlacedPlantCount { get; set; }
         #endregion
 
         #region ctor
@@ -39,7 +39,18 @@ namespace ConsoleApplication1
             DimCount = placementNode.DimCount;
             MaxDim = placementNode.MaxDim;
             MinDim = placementNode.MinDim;
-            IsAllErodesEmpties = placementNode.IsAllErodesEmpties;
+            FinalPlacement = this;
+            placementNode.FinalPlacement = this;
+            placementNode.Childrens.Add(this);
+            Parents = new List<PlacementNode> { placementNode };
+            Childrens = new List<PlacementNode>();
+            PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
+            PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
+            Placement = new Mat[Constants.SoilLayerCount];
+            //for()
+            Erosions = new Dictionary<Plant, Erosion>(placementNode.Erosions);
+            Tree = placementNode.Tree;
+            IsAllErodesEmpties = true;
         }
 
         //Create base PlacementNode
@@ -64,22 +75,20 @@ namespace ConsoleApplication1
             Erosions = ComputeErodes();
         }
 
-        private Mat CreatePlacement()
+        private Mat[] CreatePlacement()
         {
             //Create 10 channel Mat
-            var placement = new Mat(
-                Garden.SoilMap.Size,
-                DepthType.Cv32S,
-                Constants.SoilLayerCount
-            );
-            var placements = new VectorOfMat();
-
-            CvInvoke.Split(placement, placements);
-
+            var placements = new Mat[Constants.SoilLayerCount];
+            
             placements[0].SetTo(new MCvScalar(int.MaxValue));
             
-            for (var i = 1; i < placements.Size; i++)
+            for (var i = 1; i < Constants.SoilLayerCount; i++)
             {
+                placements[i] = new Mat(
+                    Garden.SoilMap.Size,
+                    DepthType.Cv32S,
+                    Constants.SoilLayerCount
+                );
                 placements[i].SetTo(new MCvScalar(0));
                 for (var j = 0; j < placements[i].Height; j++)
                 {
@@ -93,9 +102,8 @@ namespace ConsoleApplication1
                 }
                 CvInvoke.BitwiseAnd(placements[i], placements[0], placements[0]);
             }
-
-            CvInvoke.Merge(placements, placement);
-            return placement; 
+            
+            return placements; 
         }
         #endregion
 
@@ -114,35 +122,62 @@ namespace ConsoleApplication1
             IsAllErodesEmpties = isAllErodesEmpties;
             return erosions;
         }
-
-        //Update erode when plant is added
-        private void UpdateErodes(Plant plant)
-        {
-            var isAllErodesEmpties = true;
-            //foreach plant with erosion
-            /*foreach (var otherPlant in Plants.Where(x => x.Erosion.Size > 0))//TODO only plants not positionned ?
-            {
-                //Si plant placée est sur erode ou êrturb erode suppr erode
-                plant.Erosion = new Erosion(plant, Garden);
-                if (otherPlant.Erosion.Size > 0)
-                    isAllErodesEmpties = false;
-            }*/
-            IsAllErodesEmpties = isAllErodesEmpties;
-        }
         #endregion
 
         #region Place
         public void Place(Plant plant, Point position)
         {
-            plant.Position = position;
-            plant.PositionOrder = PlacedPlantCount++;
-            UpdateErodes(plant);
+            //Placement
+            PutInPlacement(plant, position);
+
+            //Erosion
+            UpdateErosion(plant, position);
+
+            //Move plant
+            PlantsPlaced.Add(PlantsToPlace.First(x => x == plant));
+            PlantsToPlace.Remove(plant);
         }
 
-        internal void Place(PlacementNode bestPlacementNode)
+        private void PutInPlacement(Plant plant, Point position)
         {
-            throw new NotImplementedException();
+            //add 
+            var placements = new VectorOfMat();
+
+            CvInvoke.Split(Placement, placements);
+
+            for (var i = 0; i < placements.Size; i++)
+            {
+                for (var j = 0; j < placements[i].Height; j++)
+                {
+                    for (var k = 0; k < placements[i].Width; k++)
+                    {
+                        //TODO
+                        if (position.X == j && position.Y == k)
+                        {
+                            placements[i].SetValue(j, k, plant.Id);
+                            placements[i].SetValue(j, k + 1, plant.Id);
+                            placements[i].SetValue(j, k + 2, plant.Id);
+                            placements[i].SetValue(j + 2, k, plant.Id);
+                            placements[i].SetValue(j + 2, k + 1, plant.Id);
+                            placements[i].SetValue(j + 2, k + 2, plant.Id);
+                            placements[i].SetValue(j + 1, k, plant.Id);
+                            placements[i].SetValue(j + 1, k + 2, plant.Id);
+                            placements[i].SetValue(j + 1, k + 1, plant.Id);
+                        }
+                        
+                    }
+                }
+            }
+
+            CvInvoke.Merge(placements, Placement);
         }
+
+        private void UpdateErosion(Plant plant, Point position)
+        {
+            ComputeErodes();
+        }
+
+
         #endregion
 
         #region Other

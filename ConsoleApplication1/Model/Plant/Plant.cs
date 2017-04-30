@@ -8,7 +8,7 @@ namespace ConsoleApplication1
     {
         #region properties
         //General infos
-        public long Id { get; set; }
+        public int Id { get; set; }
         public Graphic Graphic { get; set; }
 
         //Models
