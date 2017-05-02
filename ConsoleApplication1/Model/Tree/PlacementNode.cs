@@ -25,11 +25,7 @@ namespace ConsoleApplication1
         public Dictionary<Plant, Erosion> Erosions { get; set; }
         public PlacementTree Tree { get; set; }
         public Garden Garden { get; set; }
-        public uint DimCount { get; set; }
-        public uint MaxDim { get; set; }
-        public int MinDim { get; set; }
         public bool IsAllErodesEmpties { get; set; }
-        public uint PlacedPlantCount { get; set; }
         public Placement Placement { get; set; }
         #endregion
 
@@ -38,9 +34,6 @@ namespace ConsoleApplication1
         public PlacementNode(PlacementNode placementNode)
         {
             Garden = placementNode.Garden;
-            DimCount = placementNode.DimCount;
-            MaxDim = placementNode.MaxDim;
-            MinDim = placementNode.MinDim;
             FinalPlacement = this;
             placementNode.FinalPlacement = this;
             placementNode.Childrens.Add(this);
@@ -48,15 +41,14 @@ namespace ConsoleApplication1
             Childrens = new List<PlacementNode>();
             PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
             PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
-            //CP
+
             Erosions = new Dictionary<Plant, Erosion>();
             foreach (var erosion in placementNode.Erosions)
-            {
                 Erosions.Add(erosion.Key, new Erosion(erosion.Value));
-            }
+
             Placement = placementNode.Placement;
             Tree = placementNode.Tree;
-            IsAllErodesEmpties = true;
+            IsAllErodesEmpties = placementNode.IsAllErodesEmpties;
             Positions = new Dictionary<Plant, Point>(placementNode.Positions);
         }
 
@@ -92,7 +84,7 @@ namespace ConsoleApplication1
             foreach (var plant in PlantsToPlace.Concat(PlantsPlaced))
             {
                 erosions[plant] = new Erosion(plant, placement);
-                if (erosions[plant].ErodePoints.Count > 0)
+                if (erosions[plant].ErodePoints.Count > 0 && PlantsToPlace.Contains(plant))
                     isAllErodesEmpties = false;
             }
             IsAllErodesEmpties = isAllErodesEmpties;
@@ -108,7 +100,7 @@ namespace ConsoleApplication1
             Positions.Add(plant, position);
 
             //Erosion
-            UpdateErosion(plant, position);
+            UpdateErosions(plant, position);
 
             //Move plant
             PlantsPlaced.Add(PlantsToPlace.First(x => x == plant));
@@ -145,9 +137,11 @@ namespace ConsoleApplication1
         */
         
         //Met à jour l'erosion avec nouvelle plant
-        private void UpdateErosion(Plant plant, Point position)
+        private void UpdateErosions(Plant plant, Point position)
         {
-            foreach (var erosion in Erosions)//Erode de chaque plants
+            var isAllErodesEmpties = true;
+
+            foreach (var erosion in Erosions.Where(x => PlantsToPlace.Contains(x.Key)))//Erode de chaque plants no placed
             {
                 for (var i = 0; i < erosion.Value.ErodePoints.Count; i++)//Pour chaque point de l'erosion
                 {
@@ -166,36 +160,31 @@ namespace ConsoleApplication1
                     }
                 }
                 Erosions[erosion.Key].ErodePoints.RemoveAll(x => x == new Point(-1, -1));
+                if (erosion.Value.ErodePoints.Count > 0 && erosion.Key != plant)
+                    isAllErodesEmpties = false;
             }
+            IsAllErodesEmpties = isAllErodesEmpties;
         }
         #endregion
 
-        #region Other
-        //Compute min and max dim of the plant list
-        public void ComputeDimInfos(List<Plant> plants)
+        public bool FastTest()
         {
-            var maxDim = 0;
-            var minDim = 0;
-            var dimCount = 0;
-            /*foreach (var plant in plants)
+            return true;
+            //Compute sum of area in each dim
+            /*var dimCount = 0;
+            for (var i = placementNode.MinDim; i <= placementNode.MaxDim; i++, dimCount++)
             {
-                var keys = plant.Model.Select(x => x.Key);
-                var dimCountLocal = plant.Model.Count;
-                if (dimCountLocal > dimCount)
-                    dimCount = dimCountLocal;
-                var minDimLocal = keys.Min();
-                if (minDimLocal < minDim)
-                    minDim = minDimLocal;
-
-                var maxDimLocal = keys.Max();
-                if (maxDimLocal > maxDim)
-                    maxDim = maxDimLocal;
+                var area = 0;
+                foreach (var model in PlacementNode.Plants.SelectMany(v => v.Model).Where(x => x.Key == i).Select(c => c.Value))
+                {
+                    area += model.Total.ToInt32();
+                }
+                if (i < 0 && area > placementNode.Garden.RootArea)
+                    return false;
+                if (i >= 0 && area > placementNode.Garden.SoilArea)
+                    return false;
             }*/
-            DimCount = (uint)dimCount;
-            MinDim = minDim;
-            MaxDim = (uint)maxDim;
         }
-        #endregion
     }
 }
 

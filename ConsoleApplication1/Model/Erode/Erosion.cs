@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using Emgu.CV.Util;
 
 namespace ConsoleApplication1
 {

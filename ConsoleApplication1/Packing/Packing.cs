@@ -40,7 +40,7 @@ namespace ConsoleApplication1
             if (currentNode == null)
                 throw  new Exception("First node cannot be null");
 
-            while (FastTest(currentNode) && (currentNode.PlantsToPlace.Count != 0 || currentNode.IsAllErodesEmpties))
+            while (currentNode.FastTest() && currentNode.PlantsToPlace.Count != 0 && !currentNode.IsAllErodesEmpties)
             {
                 //Pour chaque elem erosion des plantes pas encore placé dans le current node
                 foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
@@ -72,25 +72,6 @@ namespace ConsoleApplication1
             Tree.Add(node);
 
             BackTrackPacking.ComputeBackTrackPacking();
-        }
-
-        public bool FastTest(PlacementNode placementNode)
-        {
-            return true;
-            //Compute sum of area in each dim
-            /*var dimCount = 0;
-            for (var i = placementNode.MinDim; i <= placementNode.MaxDim; i++, dimCount++)
-            {
-                var area = 0;
-                foreach (var model in PlacementNode.Plants.SelectMany(v => v.Model).Where(x => x.Key == i).Select(c => c.Value))
-                {
-                    area += model.Total.ToInt32();
-                }
-                if (i < 0 && area > placementNode.Garden.RootArea)
-                    return false;
-                if (i >= 0 && area > placementNode.Garden.SoilArea)
-                    return false;
-            }*/
         }
         #endregion
     }
