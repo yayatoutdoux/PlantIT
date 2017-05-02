@@ -23,9 +23,9 @@ namespace ConsoleApplication1
             //SoilMap
             var soilMap = new Mat(new Size(500, 500), DepthType.Cv8U, 1);
             soilMap.SetTo(new MCvScalar(0));
-            for (int i = 1; i < 25; i++)
+            for (var i = 1; i < 25; i++)
             {
-                for (int j = 1; j < 25; j++)
+                for (var j = 1; j < 25; j++)
                 {
                     soilMap.SetValue(i, j, (byte)255);
                 }
@@ -37,15 +37,21 @@ namespace ConsoleApplication1
 
             //Plants
             //p1 2147483647
-            var k = 1;
-            var plantMap1 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
-            var plant1 = new Plant { Id = 2147483640, Model = new List<Mat> { plantMap1, plantMap1 , plantMap1, plantMap1, plantMap1, plantMap1, plantMap1, plantMap1, plantMap1, plantMap1 } };
+            //var k = 1;
+            //var plantMap1 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
+            var plant1 = new Plant {
+                Id = 2147483640/2,
+                Model = new [] { 1, 1 , 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
 
             //p2
-            k = 1;
-            var plantMap2 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
-            var plant2 = new Plant { Id = 2147483646/2, Model = new List<Mat> { plantMap2, plantMap2, plantMap2, plantMap2, plantMap2, plantMap2, plantMap2, plantMap2, plantMap2, plantMap2 } };
-
+            //k = 1;
+            //var plantMap2 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
+            var plant2 = new Plant
+            {
+                Id = 2147483640/4,
+                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
             //Packing
             var packing = new Packing(new List<Plant> { plant1, plant2 }, garden);
 

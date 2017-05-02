@@ -43,6 +43,7 @@ namespace ConsoleApplication1
 
             while (currentNode.PlantsToPlace.Count != 0 || currentNode.IsAllErodesEmpties)
             {
+                //Pour chaque elem erosion des plantes pas encore placé dans le current node
                 foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
                 {
                     var map = erosion.Value.ErodeMap;
@@ -63,10 +64,10 @@ namespace ConsoleApplication1
                         }
                     }
                 }
-
-                currentNode = FindBestPlacementNodes(currentNode.Childrens);
                 if (!currentNode.Childrens.Any())
                     return currentNode;
+                currentNode = FindBestPlacementNodes(currentNode.Childrens);
+                
             }
             return currentNode;
         }

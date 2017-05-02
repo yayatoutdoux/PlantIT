@@ -47,7 +47,10 @@ namespace ConsoleApplication1
                         }
                     }
                 }
-                CvInvoke.Erode(erodeMaps[i], erodeMaps[i], plant.Model.First()
+                var structuringElement = 
+                    CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * plant.Model[i] + 1, 2 * plant.Model[i] + 1), new Point(plant.Model[i], plant.Model[i]));
+
+                CvInvoke.Erode(erodeMaps[i], erodeMaps[i], structuringElement
                     , new Point(1, 1), 1,
                     BorderType.Constant, new MCvScalar(0));
                 CvInvoke.BitwiseAnd(erodeMaps[i], erodeMaps[0], erodeMaps[0]);

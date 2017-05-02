@@ -12,7 +12,7 @@ namespace ConsoleApplication1
         public Graphic Graphic { get; set; }
 
         //Models
-        public List<Mat> Model { get; set; }
+        public int[] Model { get; set; }
 
         //Other info
         public TimeLine TimeLine { get; set; } = null;

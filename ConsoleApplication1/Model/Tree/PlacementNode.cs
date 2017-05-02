@@ -50,7 +50,7 @@ namespace ConsoleApplication1
             Placement = placementNode.Placement;
             Tree = placementNode.Tree;
             IsAllErodesEmpties = true;
-            Positions = new Dictionary<Plant, Point>();
+            Positions = new Dictionary<Plant, Point>(placementNode.Positions);
         }
 
         //Create base PlacementNode
@@ -94,22 +94,25 @@ namespace ConsoleApplication1
         #endregion
 
         #region Place
+        //Place une plante dans un noeud de larbre : met à jour l'erosion de chaque plante de ce noeud
         public void Place(Plant plant, Point position)
         {
+            
+
             //Placement
-            var placement = PutInPlacement(plant, position);
+            //var placement = PutInPlacement(plant, position);
             Positions.Add(plant, position);
 
             //Erosion
-            UpdateErosion(plant, position, placement);
-            placement.Dispose();
+            UpdateErosion(plant, position);
+            //placement.Dispose();
 
             //Move plant
             PlantsPlaced.Add(PlantsToPlace.First(x => x == plant));
             PlantsToPlace.Remove(plant);
         }
 
-        private Placement PutInPlacement(Plant plant, Point position)
+        /*private Placement PutInPlacement(Plant plant, Point position)
         {
             var placement = new Placement(Placement);
             for (var i = 0; i < placement.Placements.Length; i++)
@@ -136,10 +139,21 @@ namespace ConsoleApplication1
             }
             return placement;
         }
+        */
 
-        private void UpdateErosion(Plant plant, Point position, Placement placement)
+        //Met à jour l'erosion avec nouvelle plant
+        private void UpdateErosion(Plant plant, Point position)
         {
-            
+            foreach (var erosion in Erosions)
+            {
+                for (var i = 0; i < erosion.Value.ErodeMap.Height; i++)
+                {
+                    for (var j = 0; j < erosion.Value.ErodeMap.Width; j++)
+                    {
+                        
+                    }
+                }
+            }
         }
         #endregion
 
