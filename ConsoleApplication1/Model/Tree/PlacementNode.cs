@@ -105,19 +105,17 @@ namespace ConsoleApplication1
         public void Place(Plant plant, Point position)
         {
             //Placement
-            //var placement = PutInPlacement(plant, position);
             Positions.Add(plant, position);
 
             //Erosion
             UpdateErosion(plant, position);
-            //placement.Dispose();
 
             //Move plant
             PlantsPlaced.Add(PlantsToPlace.First(x => x == plant));
             PlantsToPlace.Remove(plant);
         }
 
-        /*private Placement PutInPlacement(Plant plant, Point position)
+        private Placement PutInPlacement(Plant plant, Point position)
         {
             var placement = new Placement(Placement);
             for (var i = 0; i < placement.Placements.Length; i++)
@@ -144,7 +142,7 @@ namespace ConsoleApplication1
             }
             return placement;
         }
-        */
+        
 
         //Met à jour l'erosion avec nouvelle plant
         private void UpdateErosion(Plant plant, Point position)
@@ -155,12 +153,18 @@ namespace ConsoleApplication1
                 {
                     for (var j = 0; j < erosion.Value.ErodeMap.Width; j++)
                     {
-                        if(erosion.Value.ErodeMap.GetValue(i, j) == (byte)255 
-                            && (Math.Abs(i - position.X) <= erosion.Key.Model[0]
-                            && Math.Abs(j - position.Y) <= erosion.Key.Model[0])
-                            )
+                        var distance = Math.Max(Math.Abs(i - position.X), Math.Abs(j - position.Y));
+
+                        if (erosion.Value.ErodeMap.GetValue(i, j) == (byte)255 && distance <= plant.Model[0])
                         {
-                            erosion.Value.ErodeMap.SetValue(i, j, (byte)0);
+                            //On regarde si on peut tj la laisser blanche
+                            for (var k = 0; k < erosion.Key.Model.Length; k++)
+                            {
+                                if (erosion.Key.Model[k] + plant.Model[k] >= distance)//Peut plus etre placés
+                                {
+                                    erosion.Value.ErodeMap.SetValue(i, j, (byte)0);
+                                }
+                            }
                         }
                     }
                 }

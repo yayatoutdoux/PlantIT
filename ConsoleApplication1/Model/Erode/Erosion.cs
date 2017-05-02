@@ -10,7 +10,6 @@ namespace ConsoleApplication1
 {
     public class Erosion
     {
-        private Erosion value;
         #region properties
         public Mat ErodeMap { get; set; }
         //public List<Point> ErodePoints { get; set; }
@@ -60,10 +59,10 @@ namespace ConsoleApplication1
             ErodeMap = erodeMaps[0];
         }
 
-        public Erosion(Erosion value)
+        public Erosion(Erosion erosion)
         {
-            ErodeMap = new Mat(value.ErodeMap.Size, DepthType.Cv8U, 1);
-            value.ErodeMap.CopyTo(ErodeMap);
+            ErodeMap = new Mat(erosion.ErodeMap.Size, DepthType.Cv8U, 1);
+            erosion.ErodeMap.CopyTo(ErodeMap);
         }
     }
     #endregion
