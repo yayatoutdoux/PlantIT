@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Emgu.CV;
 using Emgu.CV.Cuda;
 
 namespace ConsoleApplication1
@@ -13,6 +14,8 @@ namespace ConsoleApplication1
         public List<Plant> PlantList { get; set; }
         public Garden Garden { get; set; }
         public PlacementTree Tree { get; set; }
+        public Placement Placement { get; set; }
+
         public PlacementNode FinalNode { get; set; }
 
         #endregion
@@ -22,7 +25,8 @@ namespace ConsoleApplication1
         {
             Garden = garden;
             PlantList = plantList;
-            Tree = new PlacementTree(garden, plantList);
+            Placement = new Placement(garden);
+            Tree = new PlacementTree(Placement, garden, plantList);
             FinalNode = ComputePacking();
         }
         #endregion
@@ -32,18 +36,24 @@ namespace ConsoleApplication1
         {
             //FastTest
             var currentNode = Tree.CurrentNode;
+            if (currentNode == null)
+            {
+                throw  new Exception("First node cannot be null");
+            }
+
             while (currentNode.PlantsToPlace.Count != 0 || currentNode.IsAllErodesEmpties)
             {
                 foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
                 {
                     var map = erosion.Value.ErodeMap;
-                    for (var j = 0; j < map[0].Height/200; j++)
+                    for (var j = 0; j < map.Height; j++)
                     {
-                        for (var k = 0; k < map[0].Width/200; k++)
+                        for (var k = 0; k < map.Width; k++)
                         {
-                            if (map[0].GetValue(j, k) == (byte)255)
+                            if (map.GetValue(j, k) == (byte)255)
                             {
                                 var node = new PlacementNode(currentNode);
+                                
                                 //node.Place(erosion.Key, new Point(j, k));
                                 Tree.Add(node);
                                 //BT

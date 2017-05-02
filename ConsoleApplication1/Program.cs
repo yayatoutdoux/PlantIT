@@ -48,27 +48,8 @@ namespace ConsoleApplication1
 
             //Packing
             var packing = new Packing(new List<Plant> { plant1, plant2 }, garden);
-            var tt = packing.FinalNode.Placement[0];
-            for (int i = 1; i < tt.Height; i++)
-            {
-                for (int j = 1; j < tt.Width; j++)
-                {
-                    if (tt.GetValue(i, j) == int.MaxValue)
-                    {
-                        tt.SetValue(i, j, 0);
 
-                    }
-                }
-            }
-            var iii = packing.FinalNode.Placement[0].GetData();
-            for (int i = 0; i < iii.Length; i++)
-            {
-                if (iii[i] != 0)
-                {
-                    var iiiii = 4;
-                }
-            }
-            PrintInWindows("name", packing.FinalNode.Placement[0]);
+            PrintInWindows("name", packing.FinalNode.Erosions.First().Value.ErodeMap);
         }
 
         public static void StructuringElement()

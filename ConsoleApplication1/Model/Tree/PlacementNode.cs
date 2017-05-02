@@ -21,7 +21,6 @@ namespace ConsoleApplication1
         public List<Plant> PlantsPlaced { get; set; }
         public Dictionary<Plant, Point> Positions { get; set; }
         public Dictionary<Plant, Erosion> Erosions { get; set; }
-        public Mat[] Placement { get; set; }
         public PlacementTree Tree { get; set; }
         public Garden Garden { get; set; }
         public uint DimCount { get; set; }
@@ -29,6 +28,7 @@ namespace ConsoleApplication1
         public int MinDim { get; set; }
         public bool IsAllErodesEmpties { get; set; }
         public uint PlacedPlantCount { get; set; }
+        public Placement Placement { get; set; }
         #endregion
 
         #region ctor
@@ -46,23 +46,13 @@ namespace ConsoleApplication1
             Childrens = new List<PlacementNode>();
             PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
             PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
-            Placement = new Mat[Constants.SoilLayerCount];
-            for (int i = 0; i < Placement.Length; i++)
-            {
-                Placement[i] = new Mat(
-                    Garden.SoilMap.Size,
-                    DepthType.Cv32S,
-                    1
-                );
-                placementNode.Placement[i].CopyTo(Placement[i]);
-            }
             Erosions = new Dictionary<Plant, Erosion>(placementNode.Erosions);
             Tree = placementNode.Tree;
             IsAllErodesEmpties = true;
         }
 
         //Create base PlacementNode
-        public PlacementNode(Garden garden, List<Plant> plantList, PlacementTree tree)
+        public PlacementNode(Placement placement, Garden garden, List<Plant> plantList, PlacementTree tree)
         {
             //Tree
             Tree = tree;
@@ -76,47 +66,11 @@ namespace ConsoleApplication1
             Positions = new Dictionary<Plant, Point>();
             Garden = garden;
 
-            //Placement
-            Placement = CreatePlacement();
+            //Place plant ?
+            Placement = placement;
 
             //Erode
             Erosions = ComputeErodes();
-        }
-
-        private Mat[] CreatePlacement()
-        {
-            //Create 10 channel Mat
-            var placements = new Mat[Constants.SoilLayerCount];
-            
-            for (var i = 0; i < Constants.SoilLayerCount; i++)
-            {
-                placements[i] = new Mat(
-                    Garden.SoilMap.Size,
-                    DepthType.Cv32S,
-                    1
-                );
-
-                if (i == 0)
-                {
-                    placements[i].SetTo(new MCvScalar(int.MaxValue));
-                    continue;
-                }
-                placements[i].SetTo(new MCvScalar(0));
-
-                for (var j = 0; j < placements[i].Height; j++)
-                {
-                    for (var k = 0; k < placements[i].Width; k++)
-                    {
-                        if (Garden.SoilMap.GetValue(j, k) == (byte) 255)
-                        {
-                            placements[i].SetValue(j, k, int.MaxValue);
-                        }
-                    }
-                }
-                CvInvoke.BitwiseAnd(placements[i], placements[0], placements[0]);
-            }
-            
-            return placements; 
         }
         #endregion
 
@@ -153,7 +107,7 @@ namespace ConsoleApplication1
 
         private void PutInPlacement(Plant plant, Point position)
         {
-            for (var i = 0; i < Placement.Length; i++)
+            /*for (var i = 0; i < Placement.Length; i++)
             {
                 for (var j = 0; j < Placement[i].Height; j++)
                 {
@@ -174,7 +128,7 @@ namespace ConsoleApplication1
                         }
                     }
                 }
-            }
+            }*/
         }
 
         private void UpdateErosion(Plant plant, Point position)
