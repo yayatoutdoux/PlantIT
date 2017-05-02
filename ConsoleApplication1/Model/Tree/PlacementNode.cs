@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Net.Configuration;
 using System.Runtime.InteropServices;
+using Emgu.CV.Cvb;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
@@ -46,7 +48,12 @@ namespace ConsoleApplication1
             Childrens = new List<PlacementNode>();
             PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
             PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
-            Erosions = new Dictionary<Plant, Erosion>(placementNode.Erosions);
+            //CP
+            Erosions = new Dictionary<Plant, Erosion>();
+            foreach (var erosion in placementNode.Erosions)
+            {
+                Erosions.Add(erosion.Key, new Erosion(erosion.Value));
+            }
             Placement = placementNode.Placement;
             Tree = placementNode.Tree;
             IsAllErodesEmpties = true;
@@ -97,8 +104,6 @@ namespace ConsoleApplication1
         //Place une plante dans un noeud de larbre : met à jour l'erosion de chaque plante de ce noeud
         public void Place(Plant plant, Point position)
         {
-            
-
             //Placement
             //var placement = PutInPlacement(plant, position);
             Positions.Add(plant, position);
@@ -144,15 +149,29 @@ namespace ConsoleApplication1
         //Met à jour l'erosion avec nouvelle plant
         private void UpdateErosion(Plant plant, Point position)
         {
-            foreach (var erosion in Erosions)
+            foreach (var erosion in Erosions)//Erode de chaque plants
             {
                 for (var i = 0; i < erosion.Value.ErodeMap.Height; i++)
                 {
                     for (var j = 0; j < erosion.Value.ErodeMap.Width; j++)
                     {
-                        
+                        if(erosion.Value.ErodeMap.GetValue(i, j) == (byte)255 
+                            && (Math.Abs(i - position.X) <= erosion.Key.Model[0]
+                            && Math.Abs(j - position.Y) <= erosion.Key.Model[0])
+                            )
+                        {
+                            erosion.Value.ErodeMap.SetValue(i, j, (byte)0);
+                        }
                     }
                 }
+                /*var structuringElement =
+                    CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * plant.Model[i] + 1, 2 * plant.Model[i] + 1), new Point(plant.Model[i], plant.Model[i]));
+
+                CvInvoke.Erode(erosion.[i], erodeMaps[i], structuringElement
+                    , new Point(1, 1), 1,
+                    BorderType.Constant, new MCvScalar(0));
+                CvInvoke.BitwiseAnd(erodeMaps[i], erodeMaps[0], erodeMaps[0]);
+                i++;*/
             }
         }
         #endregion
