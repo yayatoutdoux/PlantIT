@@ -35,39 +35,76 @@ namespace ConsoleApplication1
             var garden = new Garden(soilMap);
 
 
-            //Plants
-            //p1 2147483647
-            //var k = 1;
-            //var plantMap1 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
+            //Plants 2147483647
             var plant1 = new Plant {
                 Id = 2147483640/2,
                 Model = new [] { 1, 1 , 1, 1, 1, 1, 1, 1, 1, 1 }
             };
 
-            //p2
-            //k = 1;
-            //var plantMap2 = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * k + 1, 2 * k + 1), new Point(k, k));
+            var plant1d = new Plant
+            {
+                Id = 2147483640 / 2,
+                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
+
+            var plant1dd = new Plant
+            {
+                Id = 2147483640 / 2,
+                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
+            var plant1ddd = new Plant
+            {
+                Id = 2147483640 / 2,
+                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
+
             var plant2 = new Plant
             {
                 Id = 2147483640/4,
                 Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
             };
-
+            var plantd2 = new Plant
+            {
+                Id = 2147483640 / 4,
+                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
             var plant3 = new Plant
             {
                 Id = 2147483640 / 8,
                 Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
             };
+            var plantd3 = new Plant
+            {
+                Id = 2147483640 / 8,
+                Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
+            };
+            var plantdd3 = new Plant
+            {
+                Id = 2147483640 / 8,
+                Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
+            };
+
+            var plantddd3 = new Plant
+            {
+                Id = 2147483640 / 8,
+                Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
+            };
             //Packing
-            var packing = new Packing(new List<Plant> { plant1, plant2, plant3 }, garden);
+            var packing = new Packing(new List<Plant> { plant1, plant2, plant3, plantd2, plantd3, plantdd3, plant1d, plant1dd, plant1ddd }, garden);
 
             var aa = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 1);
             garden.SoilMap.CopyTo(aa);
             foreach (var posit in packing.FinalNode.Positions)
             {
-                aa.SetValue(posit.Value.X, posit.Value.Y,(byte) (posit.Key.Id/255));
+                for (var i = posit.Value.X - posit.Key.Model[0]; i < posit.Value.X - posit.Key.Model[0] + posit.Key.Model[0]*2 + 1; i++)
+                {
+                    for (var j = posit.Value.Y - posit.Key.Model[0]; j < posit.Value.Y - posit.Key.Model[0] + posit.Key.Model[0] * 2 + 1; j++)
+                    {
+                        aa.SetValue(i, j, (byte) (posit.Key.Id/255));
+                    }
+                }
             }
-            CvInvoke.Imwrite("C:\\jj\\img.jpg", aa);
+            CvInvoke.Imwrite("C:\\jj\\img.bmp", aa);
 
             PrintInWindows("name", aa);
         }
