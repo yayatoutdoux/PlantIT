@@ -1,11 +1,14 @@
-﻿using Emgu.CV;
+﻿using System;
+using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 
 namespace ConsoleApplication1
 {
-    public class Placement
+    public class Placement : IDisposable
     {
+        private Placement placement;
+
         public Mat[] Placements { get; set; }
 
         public Placement(Garden garden)
@@ -39,6 +42,28 @@ namespace ConsoleApplication1
                     }
                 }
                 CvInvoke.BitwiseAnd(Placements[i], Placements[0], Placements[0]);
+            }
+        }
+
+        public Placement(Placement placement)
+        {
+            Placements = new Mat[Constants.SoilLayerCount];
+            for (var i = 0; i < Constants.SoilLayerCount; i++)
+            {
+                Placements[i] = new Mat(
+                    placement.Placements[i].Size,
+                    DepthType.Cv32S,
+                    1
+                );
+                placement.Placements[i].CopyTo(Placements[i]);
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var plc in Placements)
+            {
+                plc.Dispose();
             }
         }
     }

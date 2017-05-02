@@ -47,8 +47,10 @@ namespace ConsoleApplication1
             PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
             PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
             Erosions = new Dictionary<Plant, Erosion>(placementNode.Erosions);
+            Placement = placementNode.Placement;
             Tree = placementNode.Tree;
             IsAllErodesEmpties = true;
+            Positions = new Dictionary<Plant, Point>();
         }
 
         //Create base PlacementNode
@@ -70,19 +72,19 @@ namespace ConsoleApplication1
             Placement = placement;
 
             //Erode
-            Erosions = ComputeErodes();
+            Erosions = ComputeErodes(Placement);
         }
         #endregion
 
         #region Erode
         //Compute erodes of plants in the garden
-        internal Dictionary<Plant, Erosion> ComputeErodes()
+        internal Dictionary<Plant, Erosion> ComputeErodes(Placement placement)
         {
             var erosions = new Dictionary<Plant, Erosion>();
             var isAllErodesEmpties = true;
             foreach (var plant in PlantsToPlace.Concat(PlantsPlaced))
             {
-                erosions[plant] = new Erosion(plant, Placement);
+                erosions[plant] = new Erosion(plant, placement);
                 if (erosions[plant].Size > 0)
                     isAllErodesEmpties = false;
             }
@@ -95,45 +97,49 @@ namespace ConsoleApplication1
         public void Place(Plant plant, Point position)
         {
             //Placement
-            PutInPlacement(plant, position);
+            var placement = PutInPlacement(plant, position);
+            Positions.Add(plant, position);
 
             //Erosion
-            UpdateErosion(plant, position);
+            UpdateErosion(plant, position, placement);
+            placement.Dispose();
 
             //Move plant
             PlantsPlaced.Add(PlantsToPlace.First(x => x == plant));
             PlantsToPlace.Remove(plant);
         }
 
-        private void PutInPlacement(Plant plant, Point position)
+        private Placement PutInPlacement(Plant plant, Point position)
         {
-            /*for (var i = 0; i < Placement.Length; i++)
+            var placement = new Placement(Placement);
+            for (var i = 0; i < placement.Placements.Length; i++)
             {
-                for (var j = 0; j < Placement[i].Height; j++)
+                for (var j = 0; j < placement.Placements[i].Height; j++)
                 {
-                    for (var k = 0; k < Placement[i].Width; k++)
+                    for (var k = 0; k < placement.Placements[i].Width; k++)
                     {
                         //TODO
                         if (position.X == j && position.Y == k)
                         {
-                            Placement[i].SetValue(j, k, plant.Id);
-                            Placement[i].SetValue(j, k + 1, plant.Id);
-                            Placement[i].SetValue(j, k + 2, plant.Id);
-                            Placement[i].SetValue(j + 2, k, plant.Id);
-                            Placement[i].SetValue(j + 2, k + 1, plant.Id);
-                            Placement[i].SetValue(j + 2, k + 2, plant.Id);
-                            Placement[i].SetValue(j + 1, k, plant.Id);
-                            Placement[i].SetValue(j + 1, k + 2, plant.Id);
-                            Placement[i].SetValue(j + 1, k + 1, plant.Id);
+                            Placement.Placements[i].SetValue(j, k, plant.Id);
+                            Placement.Placements[i].SetValue(j, k + 1, plant.Id);
+                            Placement.Placements[i].SetValue(j, k + 2, plant.Id);
+                            Placement.Placements[i].SetValue(j + 2, k, plant.Id);
+                            Placement.Placements[i].SetValue(j + 2, k + 1, plant.Id);
+                            Placement.Placements[i].SetValue(j + 2, k + 2, plant.Id);
+                            Placement.Placements[i].SetValue(j + 1, k, plant.Id);
+                            Placement.Placements[i].SetValue(j + 1, k + 2, plant.Id);
+                            Placement.Placements[i].SetValue(j + 1, k + 1, plant.Id);
                         }
                     }
                 }
-            }*/
+            }
+            return placement;
         }
 
-        private void UpdateErosion(Plant plant, Point position)
+        private void UpdateErosion(Plant plant, Point position, Placement placement)
         {
-            ComputeErodes();
+            
         }
         #endregion
 

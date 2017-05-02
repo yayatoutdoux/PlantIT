@@ -52,25 +52,28 @@ namespace ConsoleApplication1
                         {
                             if (map.GetValue(j, k) == (byte)255)
                             {
+                                Console.WriteLine("j k: " + j + " " + k);
+
                                 var node = new PlacementNode(currentNode);
                                 
-                                //node.Place(erosion.Key, new Point(j, k));
+                                node.Place(erosion.Key, new Point(j, k));
                                 Tree.Add(node);
                                 //BT
                             }
                         }
                     }
                 }
-                if (Tree.CurrentNode.Childrens.FirstOrDefault() == null)
+
+                currentNode = FindBestPlacementNodes(currentNode.Childrens);
+                if (!currentNode.Childrens.Any())
                     return currentNode;
-                currentNode = Tree.CurrentNode.Childrens.FirstOrDefault();
             }
-            return null;
+            return currentNode;
         }
         
-        private PlacementNode FindBestPlacementNodes(List<PlacementNode> localPlacementNodes)
+        private PlacementNode FindBestPlacementNodes(List<PlacementNode> placementNodes)
         {
-            throw new NotImplementedException();
+            return placementNodes.First();
         }
 
         private void BackTrack(PlacementNode PlacementNode)
