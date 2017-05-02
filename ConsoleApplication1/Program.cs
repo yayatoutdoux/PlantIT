@@ -21,7 +21,7 @@ namespace ConsoleApplication1
         public static void Test1()
         {
             //SoilMap
-            var soilMap = new Mat(new Size(500, 500), DepthType.Cv8U, 1);
+            var soilMap = new Mat(new Size(50, 50), DepthType.Cv8U, 1);
             soilMap.SetTo(new MCvScalar(0));
             for (var i = 1; i < 12; i++)
             {
@@ -52,11 +52,24 @@ namespace ConsoleApplication1
                 Id = 2147483640/4,
                 Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
             };
-            //Packing
-            var packing = new Packing(new List<Plant> { plant1, plant2 }, garden);
 
-            var aa = new Mat();
-            //PrintInWindows("name", packing.FinalNode.Erosions.First().Value.);
+            var plant3 = new Plant
+            {
+                Id = 2147483640 / 8,
+                Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
+            };
+            //Packing
+            var packing = new Packing(new List<Plant> { plant1, plant2, plant3 }, garden);
+
+            var aa = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 1);
+            garden.SoilMap.CopyTo(aa);
+            foreach (var posit in packing.FinalNode.Positions)
+            {
+                aa.SetValue(posit.Value.X, posit.Value.Y,(byte) (posit.Key.Id/255));
+            }
+            CvInvoke.Imwrite("C:\\jj\\img.jpg", aa);
+
+            PrintInWindows("name", aa);
         }
 
         public static void StructuringElement()

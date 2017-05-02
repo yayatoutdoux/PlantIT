@@ -115,7 +115,7 @@ namespace ConsoleApplication1
             PlantsToPlace.Remove(plant);
         }
 
-        private Placement PutInPlacement(Plant plant, Point position)
+        /*private Placement PutInPlacement(Plant plant, Point position)
         {
             var placement = new Placement(Placement);
             for (var i = 0; i < placement.Placements.Length; i++)
@@ -142,8 +142,8 @@ namespace ConsoleApplication1
             }
             return placement;
         }
+        */
         
-
         //Met à jour l'erosion avec nouvelle plant
         private void UpdateErosion(Plant plant, Point position)
         {
@@ -159,7 +159,7 @@ namespace ConsoleApplication1
                     //On regardesi on peut tj la laisser blanche
                     for (var k = 0; k < erosion.Key.Model.Length; k++)
                     {
-                        if (erosion.Key.Model[k] + plant.Model[k] > distance)//Peut plus etre placés
+                        if (erosion.Key.Model[k] + plant.Model[k] + 1 > distance)//Peut plus etre placés
                         {
                             Erosions[erosion.Key].ErodePoints[i] = new Point(-1, -1);
                         }
@@ -167,7 +167,6 @@ namespace ConsoleApplication1
                 }
                 Erosions[erosion.Key].ErodePoints.RemoveAll(x => x == new Point(-1, -1));
             }
-
         }
         #endregion
 

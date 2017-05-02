@@ -50,11 +50,12 @@ namespace ConsoleApplication1
                     CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * plant.Model[i] + 1, 2 * plant.Model[i] + 1), new Point(plant.Model[i], plant.Model[i]));
 
                 CvInvoke.Erode(erodeMaps[i], erodeMaps[i], structuringElement
-                    , new Point(1, 1), 1,
+                    , new Point(plant.Model[i], plant.Model[i]), 1,
                     BorderType.Constant, new MCvScalar(0));
                 CvInvoke.BitwiseAnd(erodeMaps[i], erodeMaps[0], erodeMaps[0]);
                 
             }
+            
             for (var j = 0; j < erodeMaps[0].Height; j++)
             {
                 for (var k = 0; k < erodeMaps[0].Width; k++)
