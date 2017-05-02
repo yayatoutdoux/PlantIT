@@ -11,14 +11,13 @@ namespace ConsoleApplication1
     public class Erosion
     {
         #region properties
-        public Mat ErodeMap { get; set; }
-        //public List<Point> ErodePoints { get; set; }
-        public int Size { get; set; } = 0;
+        public List<Point> ErodePoints { get; set; }
         #endregion
 
         #region ctor
         public Erosion(Plant plant, Placement placements)
         {
+            ErodePoints = new List<Point>();
             var erodeMaps = new Mat[Constants.SoilLayerCount];
             //Create erode map
             
@@ -54,15 +53,23 @@ namespace ConsoleApplication1
                     , new Point(1, 1), 1,
                     BorderType.Constant, new MCvScalar(0));
                 CvInvoke.BitwiseAnd(erodeMaps[i], erodeMaps[0], erodeMaps[0]);
-                erodeMaps[i].Dispose();
+                
             }
-            ErodeMap = erodeMaps[0];
+            for (var j = 0; j < erodeMaps[0].Height; j++)
+            {
+                for (var k = 0; k < erodeMaps[0].Width; k++)
+                {
+                    if (erodeMaps[0].GetValue(j, k) != 0)
+                    {
+                        ErodePoints.Add(new Point(j, k));
+                    }
+                }
+            }
         }
 
         public Erosion(Erosion erosion)
         {
-            ErodeMap = new Mat(erosion.ErodeMap.Size, DepthType.Cv8U, 1);
-            erosion.ErodeMap.CopyTo(ErodeMap);
+            ErodePoints = new List<Point>(erosion.ErodePoints);
         }
     }
     #endregion

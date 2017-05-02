@@ -55,7 +55,8 @@ namespace ConsoleApplication1
             //Packing
             var packing = new Packing(new List<Plant> { plant1, plant2 }, garden);
 
-            PrintInWindows("name", packing.FinalNode.Erosions.First().Value.ErodeMap);
+            var aa = new Mat();
+            //PrintInWindows("name", packing.FinalNode.Erosions.First().Value.);
         }
 
         public static void StructuringElement()

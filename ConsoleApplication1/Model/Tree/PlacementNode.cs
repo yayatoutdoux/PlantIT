@@ -92,7 +92,7 @@ namespace ConsoleApplication1
             foreach (var plant in PlantsToPlace.Concat(PlantsPlaced))
             {
                 erosions[plant] = new Erosion(plant, placement);
-                if (erosions[plant].Size > 0)
+                if (erosions[plant].ErodePoints.Count > 0)
                     isAllErodesEmpties = false;
             }
             IsAllErodesEmpties = isAllErodesEmpties;
@@ -149,34 +149,25 @@ namespace ConsoleApplication1
         {
             foreach (var erosion in Erosions)//Erode de chaque plants
             {
-                for (var i = 0; i < erosion.Value.ErodeMap.Height; i++)
+                for (var i = 0; i < erosion.Value.ErodePoints.Count; i++)//Pour chaque point de l'erosion
                 {
-                    for (var j = 0; j < erosion.Value.ErodeMap.Width; j++)
-                    {
-                        var distance = Math.Max(Math.Abs(i - position.X), Math.Abs(j - position.Y));
+                    var distance = Math.Max(
+                        Math.Abs(erosion.Value.ErodePoints[i].X - position.X), 
+                        Math.Abs(erosion.Value.ErodePoints[i].Y - position.Y)
+                    );
 
-                        if (erosion.Value.ErodeMap.GetValue(i, j) == (byte)255 && distance <= plant.Model[0])
+                    //On regardesi on peut tj la laisser blanche
+                    for (var k = 0; k < erosion.Key.Model.Length; k++)
+                    {
+                        if (erosion.Key.Model[k] + plant.Model[k] > distance)//Peut plus etre placés
                         {
-                            //On regarde si on peut tj la laisser blanche
-                            for (var k = 0; k < erosion.Key.Model.Length; k++)
-                            {
-                                if (erosion.Key.Model[k] + plant.Model[k] >= distance)//Peut plus etre placés
-                                {
-                                    erosion.Value.ErodeMap.SetValue(i, j, (byte)0);
-                                }
-                            }
+                            Erosions[erosion.Key].ErodePoints[i] = new Point(-1, -1);
                         }
                     }
                 }
-                /*var structuringElement =
-                    CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * plant.Model[i] + 1, 2 * plant.Model[i] + 1), new Point(plant.Model[i], plant.Model[i]));
-
-                CvInvoke.Erode(erosion.[i], erodeMaps[i], structuringElement
-                    , new Point(1, 1), 1,
-                    BorderType.Constant, new MCvScalar(0));
-                CvInvoke.BitwiseAnd(erodeMaps[i], erodeMaps[0], erodeMaps[0]);
-                i++;*/
+                Erosions[erosion.Key].ErodePoints.RemoveAll(x => x == new Point(-1, -1));
             }
+
         }
         #endregion
 

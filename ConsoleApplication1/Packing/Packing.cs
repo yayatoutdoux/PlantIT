@@ -46,23 +46,17 @@ namespace ConsoleApplication1
                 //Pour chaque elem erosion des plantes pas encore placé dans le current node
                 foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
                 {
-                    var map = erosion.Value.ErodeMap;
-                    for (var j = 0; j < map.Height; j++)
+                    foreach (Point t in erosion.Value.ErodePoints)
                     {
-                        for (var k = 0; k < map.Width; k++)
-                        {
-                            if (map.GetValue(j, k) == (byte)255)
-                            {
-                                Console.WriteLine("j k: " + j + " " + k);
+                        Console.WriteLine("j k: " + t.X + " " + t.Y);
 
-                                var node = new PlacementNode(currentNode);
+                        var node = new PlacementNode(currentNode);
                                 
-                                node.Place(erosion.Key, new Point(j, k));
-                                Tree.Add(node);
-                                //BT
-                            }
-                        }
+                        node.Place(erosion.Key, new Point(t.X, t.Y));
+                        Tree.Add(node);
+                        //BT
                     }
+                    
                 }
                 if (!currentNode.Childrens.Any())
                     return currentNode;
