@@ -90,7 +90,7 @@ namespace ConsoleApplication1
                 Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
             };
             //Packing
-            var packing = new Packing(new List<Plant> { plant1, plant2, plant3, plantd2, plantd3, plantdd3, plant1d, plant1dd, plant1ddd }, garden);
+            var packing = new Packing(new List<Plant> { plantd3, plantdd3, plant3, plant1, plant2, plantd2, plant1d, plant1ddd }, garden);
 
             var aa = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 1);
             garden.SoilMap.CopyTo(aa);

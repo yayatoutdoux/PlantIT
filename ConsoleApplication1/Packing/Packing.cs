@@ -15,6 +15,7 @@ namespace ConsoleApplication1
         public Garden Garden { get; set; }
         public PlacementTree Tree { get; set; }
         public Placement Placement { get; set; }
+        public BackTrackPacking BackTrackPacking { get; set; }
 
         public PlacementNode FinalNode { get; set; }
 
@@ -27,6 +28,7 @@ namespace ConsoleApplication1
             PlantList = plantList;
             Placement = new Placement(garden);
             Tree = new PlacementTree(Placement, garden, plantList);
+            BackTrackPacking = new BackTrackPacking(Tree);
             FinalNode = ComputePacking();
         }
         #endregion
@@ -34,66 +36,61 @@ namespace ConsoleApplication1
         #region other
         public PlacementNode ComputePacking()
         {
-            //FastTest
             var currentNode = Tree.CurrentNode;
             if (currentNode == null)
-            {
                 throw  new Exception("First node cannot be null");
-            }
 
-            while (currentNode.PlantsToPlace.Count != 0 || currentNode.IsAllErodesEmpties)
+            while (FastTest(currentNode) && (currentNode.PlantsToPlace.Count != 0 || currentNode.IsAllErodesEmpties))
             {
                 //Pour chaque elem erosion des plantes pas encore placé dans le current node
                 foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
                 {
-                    foreach (Point t in erosion.Value.ErodePoints)
+                    foreach (var point in erosion.Value.ErodePoints)
                     {
-                        Console.WriteLine("j k: " + t.X + " " + t.Y);
-
-                        var node = new PlacementNode(currentNode);
-                                
-                        node.Place(erosion.Key, new Point(t.X, t.Y));
-                        Tree.Add(node);
-                        //BT
+                        ComputeBackTrack(point, erosion, currentNode);
                     }
-                    
                 }
                 if (!currentNode.Childrens.Any())
-                    return currentNode;
+                    break;
                 currentNode = FindBestPlacementNodes(currentNode.Childrens);
-                
             }
             return currentNode;
         }
         
-        private PlacementNode FindBestPlacementNodes(List<PlacementNode> placementNodes)
+        private PlacementNode FindBestPlacementNodes(IEnumerable<PlacementNode> placementNodes)
         {
             return placementNodes.First();
         }
 
-        private void BackTrack(PlacementNode PlacementNode)
+        private void ComputeBackTrack(Point point, KeyValuePair<Plant, Erosion> erosion, PlacementNode currentNode)
         {
-            //for each position in garden
-            
+            Console.WriteLine("j k: " + point.X + " " + point.Y);
+
+            //Create new node
+            var node = new PlacementNode(currentNode);
+            node.Place(erosion.Key, new Point(point.X, point.Y));
+            Tree.Add(node);
+
+            BackTrackPacking.ComputeBackTrackPacking();
         }
 
-        public bool FastTest(PlacementNode PlacementNode)
+        public bool FastTest(PlacementNode placementNode)
         {
+            return true;
             //Compute sum of area in each dim
-            var dimCount = 0;
-            for (var i = PlacementNode.MinDim; i <= PlacementNode.MaxDim; i++, dimCount++)
+            /*var dimCount = 0;
+            for (var i = placementNode.MinDim; i <= placementNode.MaxDim; i++, dimCount++)
             {
                 var area = 0;
-                /*foreach (var model in PlacementNode.Plants.SelectMany(v => v.Model).Where(x => x.Key == i).Select(c => c.Value))
+                foreach (var model in PlacementNode.Plants.SelectMany(v => v.Model).Where(x => x.Key == i).Select(c => c.Value))
                 {
                     area += model.Total.ToInt32();
-                }*/
-                if (i < 0 && area > PlacementNode.Garden.RootArea)
+                }
+                if (i < 0 && area > placementNode.Garden.RootArea)
                     return false;
-                if (i >= 0 && area > PlacementNode.Garden.SoilArea)
+                if (i >= 0 && area > placementNode.Garden.SoilArea)
                     return false;
-            }
-            return true;
+            }*/
         }
         #endregion
     }
