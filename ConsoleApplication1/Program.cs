@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using Emgu.CV;
@@ -12,6 +13,7 @@ namespace ConsoleApplication1
     {
         static void Main(string[] args)
         {
+
             Test1();
             Console.WriteLine();
             Console.WriteLine();
@@ -20,6 +22,12 @@ namespace ConsoleApplication1
 
         public static void Test1()
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            // do stuff
+
+            
             //SoilMap
             var soilMap = new Mat(new Size(50, 50), DepthType.Cv8U, 1);
             soilMap.SetTo(new MCvScalar(0));
@@ -69,6 +77,11 @@ namespace ConsoleApplication1
                 }
             }
             CvInvoke.Imwrite("C:\\jj\\img.bmp", aa);
+
+            stopWatch.Stop();
+            
+            Console.WriteLine(stopWatch.ElapsedMilliseconds + "ms");
+            Console.WriteLine(stopWatch.ElapsedMilliseconds/1000 + "s");
 
             PrintInWindows("name", aa);
         }
