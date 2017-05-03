@@ -61,18 +61,19 @@ namespace ConsoleApplication1
                             Math.Abs(point.X - position.Value.X),
                             Math.Abs(point.Y - position.Value.Y)
                         );
-                        if (distance == 0)
+                        if (Math.Abs(erosion.Key.Model[0] + position.Key.Model[0] + 1 - distance) == 0)
                         {
                             quality++;
                         }
                     }
-                    qualities.Add(new PlacementQuality()
-                    {
-                        Erosion = erosion.Value,
-                        Plant = erosion.Key,
-                        Position = point,
-                        Quality = quality
-                    });
+                    if(quality > 0)//Coller à au moins une plante
+                        qualities.Add(new PlacementQuality()
+                        {
+                            Erosion = erosion.Value,
+                            Plant = erosion.Key,
+                            Position = point,
+                            Quality = quality
+                        });
                 }
             }
 

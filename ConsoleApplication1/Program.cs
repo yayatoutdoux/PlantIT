@@ -25,7 +25,7 @@ namespace ConsoleApplication1
             soilMap.SetTo(new MCvScalar(0));
             for (var i = 1; i < 12; i++)
             {
-                for (var j = 1; j < 12; j++)
+                for (var j = 1; j < 25; j++)
                 {
                     soilMap.SetValue(i, j, (byte)255);
                 }
@@ -36,61 +36,25 @@ namespace ConsoleApplication1
 
 
             //Plants 2147483647
-            var plant1 = new Plant {
-                Id = 2147483640/2,
-                Model = new [] { 1, 1 , 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
+            var plant0 = new Plant { Id = 2147483640 / 16, Model = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+            var plant00 = new Plant { Id = 2147483640 / 16, Model = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+            var plant000 = new Plant { Id = 2147483640 / 16, Model = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+            var plant0000 = new Plant { Id = 2147483640 / 16, Model = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
+            var plant00000 = new Plant { Id = 2147483640 / 16, Model = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
 
-            var plant1d = new Plant
-            {
-                Id = 2147483640 / 2,
-                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
+            var plant1 = new Plant { Id = 2147483640/2, Model = new [] { 1, 1 , 1, 1, 1, 1, 1, 1, 1, 1 } };
+            var plant1d = new Plant { Id = 2147483640 / 2, Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+            var plant1dd = new Plant { Id = 2147483640 / 2, Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+            var plant1ddd = new Plant { Id = 2147483640 / 2, Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+            var plant2 = new Plant { Id = 2147483640/4, Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+            var plantd2 = new Plant { Id = 2147483640 / 4, Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } };
+            var plant3 = new Plant { Id = 2147483640 / 8, Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 } };
+            var plantd3 = new Plant { Id = 2147483640 / 8, Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 } };
+            var plantdd3 = new Plant { Id = 2147483640 / 8, Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 } };
+            var plantddd3 = new Plant { Id = 2147483640 / 8, Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 } };
 
-            var plant1dd = new Plant
-            {
-                Id = 2147483640 / 2,
-                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
-            var plant1ddd = new Plant
-            {
-                Id = 2147483640 / 2,
-                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
-
-            var plant2 = new Plant
-            {
-                Id = 2147483640/4,
-                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
-            var plantd2 = new Plant
-            {
-                Id = 2147483640 / 4,
-                Model = new[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-            };
-            var plant3 = new Plant
-            {
-                Id = 2147483640 / 8,
-                Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
-            };
-            var plantd3 = new Plant
-            {
-                Id = 2147483640 / 8,
-                Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
-            };
-            var plantdd3 = new Plant
-            {
-                Id = 2147483640 / 8,
-                Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
-            };
-
-            var plantddd3 = new Plant
-            {
-                Id = 2147483640 / 8,
-                Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
-            };
             //Packing
-            var packing = new Packing(new List<Plant> { plantd3, plantdd3, plant3, plant1, plant2, plantd2, plant1d, plant1ddd }, garden);
+            var packing = new Packing(new List<Plant> { plantd3, plantdd3, plant3, plant1, plant2, plantd2, plant1d, plant1ddd, plant0, plant00, plant000, plant0000, plant00000 }, garden);
 
             var aa = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 1);
             garden.SoilMap.CopyTo(aa);
