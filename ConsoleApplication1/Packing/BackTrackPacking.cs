@@ -1,10 +1,17 @@
-﻿
-
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
 namespace ConsoleApplication1
 {
+    class PlacementQuality
+    {
+         public Plant Plant { get; set; }
+         public Erosion Erosion { get; set; }
+         public Point Position { get; set; }
+         public int Quality { get; set; }
+    }
     class BackTrackPacking
     {
         public PlacementTree Tree { get; set; }
@@ -36,24 +43,42 @@ namespace ConsoleApplication1
         public PlacementNode FindBestPlacement(PlacementNode placement)
         {
             var node = new PlacementNode(placement);
-            var tatata = node.Erosions.Where(x => x.Value.ErodePoints.Count > 0 && node.PlantsToPlace.Contains(x.Key)).First();
-            node.Place(
-                tatata.Key, 
-                new Point(
-                    tatata.Value.ErodePoints.First().X,
-                    tatata.Value.ErodePoints.First().Y
-                )
-            );
 
-            //Place the best 
-            /*foreach (var erosion in node.Erosions.Where(x => node.PlantsToPlace.Contains(x.Key)))
+            //Fill quality
+            var qualities = new List<PlacementQuality>();
+
+            foreach (var erosion in node.Erosions.Where(x => node.PlantsToPlace.Contains(x.Key)))
             {
                 foreach (var point in erosion.Value.ErodePoints)
                 {
-                    node.Place(erosion.Key, new Point(point.X, point.Y));
+                    //Compute quality
+                    //Angle
+                    //dist a chaque plante deja placé
+                    var quality = 0;
+                    foreach (var position in node.Positions)
+                    {
+                        var distance = Math.Max(
+                            Math.Abs(point.X - position.Value.X),
+                            Math.Abs(point.Y - position.Value.Y)
+                        );
+                        if (distance == 0)
+                        {
+                            quality++;
+                        }
+                    }
+                    qualities.Add(new PlacementQuality()
+                    {
+                        Erosion = erosion.Value,
+                        Plant = erosion.Key,
+                        Position = point,
+                        Quality = quality
+                    });
                 }
-            }*/
+            }
 
+            //Place the best 
+            var best = qualities.First(x => x.Quality == qualities.Max(y => y.Quality));
+            node.Place(best.Plant, new Point(best.Position.X, best.Position.Y));
             return node;
         }
     }
