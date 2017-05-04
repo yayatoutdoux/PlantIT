@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Permissions;
 using Emgu.CV;
 using Emgu.CV.Cuda;
 
@@ -59,23 +60,21 @@ namespace ConsoleApplication1
         
         private PlacementNode FindBestPlacementNodes(IEnumerable<PlacementNode> placementNodes)
         {
-            //Plant à placer minimiser
             var finalNodes = placementNodes.Select(x => x.FinalPlacement);
-            var minRemainPlant = finalNodes.Min(x => x.PlantsToPlace.Count);
+            PlacementNode node = null;
+            var maxArea = -1;
 
-            if (minRemainPlant == 0)
-            {
-                return finalNodes.First(x => x.PlantsToPlace.Count == 0);
-            }
-
-            var node = placementNodes.First();
-            var minArea = int.MaxValue;
             foreach (var finalNode in finalNodes)
             {
+                //Si tte plants placés
+                if (finalNode.PlantsToPlace.Count == 0)
+                    return finalNode;
+
+                //Sinon prendre celle avec la plus grande aire remplie par des plantes
                 var area = finalNode.PlantsPlaced.Select(x => (x.Model[0]*2 + 1)*(x.Model[0] * 2 + 1)).Sum();
-                if (area < minArea)
+                if (area > maxArea)
                 {
-                    minArea = area;
+                    maxArea = area;
                     node = placementNodes.First(x => x.FinalPlacement == finalNode);
                 }
             }
@@ -91,6 +90,7 @@ namespace ConsoleApplication1
             node.Place(erosion.Key, new Point(point.X, point.Y));
             Tree.Add(node);
 
+            //Compute BT
             BackTrackPacking.ComputeBackTrackPacking(node);
         }
         #endregion
