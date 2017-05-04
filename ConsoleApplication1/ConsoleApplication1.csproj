@@ -93,6 +93,7 @@
     <Compile Include="Model\Plant\Plant.cs" />
     <Compile Include="Model\Erode\Erosion.cs" />
     <Compile Include="Model\Tools\Constants.cs" />
+    <Compile Include="Model\Tree\PlacementQuality.cs" />
     <Compile Include="Model\Tree\PlacementTree.cs" />
     <Compile Include="Model\Tree\PlacementNode.cs" />
     <Compile Include="Packing\BackTrackPacking.cs" />

@@ -1,15 +1,7 @@
-﻿using Emgu.CV;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Net.Configuration;
-using System.Runtime.InteropServices;
-using Emgu.CV.Cvb;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
-using Emgu.CV.Util;
 
 namespace ConsoleApplication1
 {

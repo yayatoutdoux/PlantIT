@@ -59,7 +59,27 @@ namespace ConsoleApplication1
         
         private PlacementNode FindBestPlacementNodes(IEnumerable<PlacementNode> placementNodes)
         {
-            return placementNodes.First();
+            //Plant à placer minimiser
+            var finalNodes = placementNodes.Select(x => x.FinalPlacement);
+            var minRemainPlant = finalNodes.Min(x => x.PlantsToPlace.Count);
+
+            if (minRemainPlant == 0)
+            {
+                return finalNodes.First(x => x.PlantsToPlace.Count == 0);
+            }
+
+            var node = placementNodes.First();
+            var minArea = int.MaxValue;
+            foreach (var finalNode in finalNodes)
+            {
+                var area = finalNode.PlantsPlaced.Select(x => (x.Model[0]*2 + 1)*(x.Model[0] * 2 + 1)).Sum();
+                if (area < minArea)
+                {
+                    minArea = area;
+                    node = placementNodes.First(x => x.FinalPlacement == finalNode);
+                }
+            }
+            return node;
         }
 
         private void ComputeBackTrack(Point point, KeyValuePair<Plant, Erosion> erosion, PlacementNode currentNode)
@@ -71,7 +91,7 @@ namespace ConsoleApplication1
             node.Place(erosion.Key, new Point(point.X, point.Y));
             Tree.Add(node);
 
-            BackTrackPacking.ComputeBackTrackPacking();
+            BackTrackPacking.ComputeBackTrackPacking(node);
         }
         #endregion
     }

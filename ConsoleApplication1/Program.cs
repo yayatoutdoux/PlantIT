@@ -31,9 +31,9 @@ namespace ConsoleApplication1
             //SoilMap
             var soilMap = new Mat(new Size(50, 50), DepthType.Cv8U, 1);
             soilMap.SetTo(new MCvScalar(0));
-            for (var i = 1; i < 12; i++)
+            for (var i = 1; i < 11; i++)
             {
-                for (var j = 1; j < 25; j++)
+                for (var j = 1; j < 11; j++)
                 {
                     soilMap.SetValue(i, j, (byte)255);
                 }
@@ -62,7 +62,22 @@ namespace ConsoleApplication1
             var plantddd3 = new Plant { Id = 2147483640 / 8, Model = new[] { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 } };
 
             //Packing
-            var packing = new Packing(new List<Plant> { plantd3, plantdd3, plant3, plant1, plant2, plantd2, plant1d, plant1ddd, plant0, plant00, plant000, plant0000, plant00000 }, garden);
+            var packing = new Packing(new List<Plant>
+            {
+                plantd3,
+                plantdd3,
+                plant3,
+                plant1,
+                plant2,
+                plantd2,
+                plant1d,
+                plant1ddd,
+                plant0,
+                plant00,
+                plant000,
+                plant0000,
+                plant00000
+            }, garden);
 
             var aa = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 1);
             garden.SoilMap.CopyTo(aa);
