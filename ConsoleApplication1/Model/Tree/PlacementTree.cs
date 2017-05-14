@@ -16,12 +16,14 @@ namespace ConsoleApplication1
 
         }
 
-        public PlacementTree(Placement placement, Garden garden, List<Plant> plantList)
+        public PlacementTree(Garden garden, List<Plant> plantList)
         {
-            //Create first node
             Nodes = new List<PlacementNode>();
-            var node = new PlacementNode(placement, garden, plantList, this);
+
+            //Create first node
+            var node = new PlacementNode(garden, plantList, this);
             Nodes.Add(node);
+
             CurrentNode = node;
         }
         #endregion

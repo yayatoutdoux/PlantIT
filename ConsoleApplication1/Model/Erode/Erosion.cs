@@ -13,52 +13,37 @@ namespace ConsoleApplication1
         #endregion
 
         #region ctor
-        public Erosion(Plant plant, Placement placements)
+        public Erosion(Plant plant, Garden garden)
         {
             ErodePoints = new List<Point>();
-            var erodeMaps = new Mat[Constants.SoilLayerCount];
-            //Create erode map
-            
-            for (var i = 0; i < erodeMaps.Length; i++)
+
+            var erodeMap = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 1 );
+
+            erodeMap.SetTo(new MCvScalar(0));
+ 
+            for (var j = 0; j < erodeMap.Height; j++)
             {
-                erodeMaps[i] = new Mat(
-                    placements.Placements[0].Size,
-                    DepthType.Cv8U,
-                    1
-                );
-                if (i == 0)
+                for (var k = 0; k < erodeMap.Width; k++)
                 {
-                    erodeMaps[i].SetTo(new MCvScalar(255));
-                    continue;
-                }
-
-                erodeMaps[i].SetTo(new MCvScalar(0));
-
-                for (var j = 0; j < erodeMaps[i].Height; j++)
-                {
-                    for (var k = 0; k < erodeMaps[i].Width; k++)
+                    if (garden.SoilMap.GetValue(j, k) != 0)
                     {
-                        if (placements.Placements[i].GetValue(j, k) != 0)
-                        {
-                            erodeMaps[i].SetValue(j, k, (byte)255);
-                        }
+                        erodeMap.SetValue(j, k, (byte)255);
                     }
                 }
-                var structuringElement = 
-                    CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * plant.Model[i] + 1, 2 * plant.Model[i] + 1), new Point(plant.Model[i], plant.Model[i]));
-
-                CvInvoke.Erode(erodeMaps[i], erodeMaps[i], structuringElement
-                    , new Point(plant.Model[i], plant.Model[i]), 1,
-                    BorderType.Constant, new MCvScalar(0));
-                CvInvoke.BitwiseAnd(erodeMaps[i], erodeMaps[0], erodeMaps[0]);
-                
             }
+            var structuringElement = 
+                CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(2 * plant.Model[0] + 1, 2 * plant.Model[0] + 1), new Point(plant.Model[0], plant.Model[0]));
+
+            CvInvoke.Erode(erodeMap, erodeMap, structuringElement
+                , new Point(plant.Model[0], plant.Model[0]), 1,
+                BorderType.Constant, new MCvScalar(0));
+           
             
-            for (var j = 0; j < erodeMaps[0].Height; j++)
+            for (var j = 0; j < erodeMap.Height; j++)
             {
-                for (var k = 0; k < erodeMaps[0].Width; k++)
+                for (var k = 0; k < erodeMap.Width; k++)
                 {
-                    if (erodeMaps[0].GetValue(j, k) != 0)
+                    if (erodeMap.GetValue(j, k) != 0)
                     {
                         ErodePoints.Add(new Point(j, k));
                     }

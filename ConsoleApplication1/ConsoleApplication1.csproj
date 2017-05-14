@@ -86,6 +86,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MatExtension.cs" />
+    <Compile Include="Model\Garden\Distance.cs" />
+    <Compile Include="Model\Garden\OccupyingAction.cs" />
     <Compile Include="Model\Garden\Garden.cs" />
     <Compile Include="Model\Tools\Graphic.cs" />
     <Compile Include="Model\Tools\TimeLine.cs" />
@@ -98,7 +100,6 @@
     <Compile Include="Model\Tree\PlacementNode.cs" />
     <Compile Include="Packing\BackTrackPacking.cs" />
     <Compile Include="Packing\Packing.cs" />
-    <Compile Include="Model\Placement.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

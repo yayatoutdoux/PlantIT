@@ -13,7 +13,6 @@ namespace ConsoleApplication1
     {
         static void Main(string[] args)
         {
-
             Test1();
             Console.WriteLine();
             Console.WriteLine();
@@ -25,15 +24,12 @@ namespace ConsoleApplication1
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            // do stuff
-
-            
             //SoilMap
             var soilMap = new Mat(new Size(50, 50), DepthType.Cv8U, 1);
             soilMap.SetTo(new MCvScalar(0));
-            for (var i = 1; i < 11; i++)
+            for (var i = 3; i < 13; i++)
             {
-                for (var j = 1; j < 11; j++)
+                for (var j = 3; j < 13; j++)
                 {
                     soilMap.SetValue(i, j, (byte)255);
                 }
@@ -41,7 +37,6 @@ namespace ConsoleApplication1
 
             //Garden
             var garden = new Garden(soilMap);
-
 
             //Plants 2147483647
             var plant0 = new Plant { Id = 2147483640 / 16, Model = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } };
@@ -79,6 +74,8 @@ namespace ConsoleApplication1
                 plant00000
             }, garden);
 
+            stopWatch.Stop();
+
             var aa = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 1);
             garden.SoilMap.CopyTo(aa);
             foreach (var posit in packing.FinalNode.Positions)
@@ -91,10 +88,9 @@ namespace ConsoleApplication1
                     }
                 }
             }
+
             CvInvoke.Imwrite("C:\\jj\\img.bmp", aa);
 
-            stopWatch.Stop();
-            
             Console.WriteLine(stopWatch.ElapsedMilliseconds + "ms");
             Console.WriteLine(stopWatch.ElapsedMilliseconds/1000 + "s");
 
