@@ -9,7 +9,6 @@ namespace ConsoleApplication1
     public class PlacementNode
     {
         #region properties
-        public PlacementNode FinalPlacement { get; set; }
         public List<PlacementNode> Childrens { get; set; }
         public List<PlacementNode> Parents { get; set; }
         public List<Plant> PlantsToPlace { get; set; }
@@ -29,7 +28,6 @@ namespace ConsoleApplication1
         {
             //Tree
             Tree = tree;
-            FinalPlacement = this;
             Childrens = new List<PlacementNode>();
             Parents = new List<PlacementNode>();
 
@@ -50,7 +48,6 @@ namespace ConsoleApplication1
             Garden = placementNode.Garden;
             Borders = new List<Point>(Garden.Borders);
             OccupyingActions = new List<OccupyingAction>(placementNode.OccupyingActions.Select(x => (OccupyingAction)x.Clone()));
-            FinalPlacement = this;
 
             //Tree
             placementNode.Childrens.Add(this);

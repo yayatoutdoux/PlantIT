@@ -8,7 +8,7 @@ using Emgu.CV.Structure;
 
 namespace ConsoleApplication1
 {
-    public class OccupyingAction : ICloneable
+    public class OccupyingAction : ICloneable, IComparable
     {
         #region properties
 
@@ -50,6 +50,13 @@ namespace ConsoleApplication1
         public object Clone()
         {
             return MemberwiseClone();
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+            OccupyingAction coa = obj as OccupyingAction;
+            return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
         }
     }
 }

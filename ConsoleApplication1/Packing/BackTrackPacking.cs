@@ -17,7 +17,6 @@ namespace ConsoleApplication1
 
         public void ComputeBackTrackPacking(PlacementNode node)
         {
-            node.FinalPlacement = node;
             var nono = BackTrack(node);
         }
 

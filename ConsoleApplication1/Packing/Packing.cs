@@ -47,22 +47,37 @@ namespace ConsoleApplication1
 
             while (/*currentNode.FastTest() && */currentNode.PlantsToPlace.Count != 0 && currentNode.OccupyingActions.Count != 0)
             {
-                foreach (var coa in currentNode.OccupyingActions)
-                {
-                    Console.WriteLine("j k: " + coa.Point.X + " " + coa.Point.Y);
-                    ComputeBackTrack(coa, currentNode);
-                }
-                currentNode = currentNode.FinalPlacement;
+                
+                 currentNode = ComputeBackTrack(currentNode);
+                
             }
             return currentNode;
         }
 
-        //Compute final node
-        private void ComputeBackTrack(OccupyingAction coa, PlacementNode node)
+        //Return node if better than best (node)
+        private PlacementNode ComputeBackTrack(PlacementNode node)
         {
-            var next = new PlacementNode(node, coa);//create new node place n update coa
-            Tree.Add(next);
-            node.FinalPlacement = next;
+            var currentNode = node;
+            Tree.Add(currentNode);
+            while (/*currentNode.FastTest() && */currentNode.PlantsToPlace.Count != 0 && currentNode.OccupyingActions.Count != 0)
+            {
+                var bestCoa = currentNode.OccupyingActions.First();
+                foreach (var coa in currentNode.OccupyingActions.Skip(1))
+                {
+                    Console.WriteLine("j k: " + coa.Point.X + " " + coa.Point.Y);
+
+                    if (coa.CompareTo(bestCoa) == 1)
+                    {
+                        bestCoa = coa;
+                    }
+                }
+                currentNode = new PlacementNode(currentNode, bestCoa);
+                Tree.Add(currentNode);
+            }
+            //Best ?
+            if (node.PlantsPlaced.Sum(x => x.Model[0]) < currentNode.PlantsPlaced.Sum(x => x.Model[0]))
+                return currentNode;
+            return node;
 
         }
 
