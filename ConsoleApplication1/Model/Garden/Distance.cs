@@ -29,77 +29,77 @@ namespace ConsoleApplication1
         #endregion
 
         #region ctor
-        public Distance(int value, SideType sideType, Plant plant, Point point)
-        {
-            Value = value;
-            SideType = sideType;
-            Plant = plant;
-            Point = point;
-        }
-
-        public Distance(Point point, Plant key, Point border)
+        public Distance(Point point, Plant plant, Point border)
         {
             Point = border;
             Plant = null;
-            Value = Math.Max(Math.Abs(point.X - border.X) - (key.Model[0] + 1), 0) + Math.Max(Math.Abs(point.Y - border.Y) - (key.Model[0] + 1), 0);
-            if (point.X > border.X)//left
+            Value = Math.Max(Math.Abs(point.X - border.X) - (plant.Model[0] + 1), 0) + Math.Max(Math.Abs(point.Y - border.Y) - (plant.Model[0] + 1), 0);
+            SideType = GetSideType(point, border, plant);
+        }
+
+        /*public Distance(OccupyingAction coa, OccupyingAction coaToModify)
+        {
+            Point = coa.Point;
+            Plant = coa.Plant;
+            Value = Math.Max(Math.Abs(coaToModify.Point.X - coa.Point.X) - (coa.Plant.Model[0] + 2 + coaToModify.Plant.Model[0]), 0) 
+                + Math.Max(Math.Abs(coaToModify.Point.Y - coa.Point.Y) - (coa.Plant.Model[0] + 2 + coaToModify.Plant.Model[0]), 0);
+            SideType = GetSideType(coaToModify.Point, coa.Point, coaToModify.Plant);
+        }*/
+
+        public Distance(Point positon, Plant plant, Point point, Plant currentPlant)
+        {
+            Point = positon;
+            Plant = plant;
+            Value = Math.Max(Math.Abs(Point.X - point.X) - (plant.Model[0] + 2 + Plant.Model[0]), 0)
+                + Math.Max(Math.Abs(Point.Y - point.Y) - (plant.Model[0] + 2 + Plant.Model[0]), 0);
+            SideType = GetSideType(point, Point, Plant);
+        }
+
+        public SideType GetSideType(Point point, Point position, Plant coaPlant)
+        {
+            if (point.X > position.X)//left
             {
-                if (point.Y - key.Model[0] > border.Y)//top
+                if (point.Y - coaPlant.Model[0] > position.Y)//top
                 {
-                    if (border.X < point.X - key.Model[0])
+                    if (position.X < point.X - coaPlant.Model[0])
                     {
-                        SideType = SideType.TOPLEFT;
+                        return SideType.TOPLEFT;
                     }
-                    else
-                    {
-                        SideType = SideType.TOP;
-                    }
+                    return SideType.TOP;
+                    
                 }
-                else if (point.Y + key.Model[0] < border.Y)//bottom
+                if (point.Y + coaPlant.Model[0] < position.Y)//bottom
                 {
-                    if (border.X < point.X - key.Model[0])
+                    if (position.X < point.X - coaPlant.Model[0])
                     {
-                        SideType = SideType.BOTTOMLEFT;
+                        return SideType.BOTTOMLEFT;
                     }
-                    else
-                    {
-                        SideType = SideType.BOTTOM;
-                    }
+                    return SideType.BOTTOM;
+                    
                 }
-                else//left
-                {
-                    SideType = SideType.LEFT;
-                }
+                return SideType.LEFT;
+                
             }
-            else//right
+
+            if (point.Y - coaPlant.Model[0] > position.Y)//top
             {
-                if (point.Y - key.Model[0] > border.Y)//top
+                if (position.X > point.X + coaPlant.Model[0])
                 {
-                    if (border.X > point.X + key.Model[0])
-                    {
-                        SideType = SideType.TOPRIGHT;
-                    }
-                    else
-                    {
-                        SideType = SideType.TOP;
-                    }
+                    return SideType.TOPRIGHT;
                 }
-                else if (point.Y + key.Model[0] < border.Y)//bottom
-                {
-                    if (border.X > point.X + key.Model[0])
-                    {
-                        SideType = SideType.BOTTOMRIGHT;
-                    }
-                    else
-                    {
-                        SideType = SideType.BOTTOM;
-                    }
-                }
-                else//left
-                {
-                    SideType = SideType.RIGHT;
-                }
+                return SideType.TOP;
+                
             }
+            if (point.Y + coaPlant.Model[0] < position.Y)//bottom
+            {
+                if (position.X > point.X + coaPlant.Model[0])
+                {
+                    return SideType.BOTTOMRIGHT;
+                }
+                return SideType.BOTTOM;
+                
+            }
+            return SideType.RIGHT;
         }
         #endregion
     }

@@ -33,7 +33,7 @@ namespace ConsoleApplication1
             PlantList = plantList;
             Tree = new PlacementTree(garden, plantList);
 
-            BackTrackPacking = new BackTrackPacking(Tree);
+            //BackTrackPacking = new BackTrackPacking(Tree);
             FinalNode = ComputePacking();
         }
         #endregion
@@ -45,30 +45,25 @@ namespace ConsoleApplication1
             if (currentNode == null)
                 throw  new Exception("First node cannot be null");
 
-            while (/*currentNode.FastTest() && */currentNode.PlantsToPlace.Count != 0 && !currentNode.IsAllErodesEmpties)
+            while (/*currentNode.FastTest() && */currentNode.PlantsToPlace.Count != 0 && currentNode.OccupyingActions.Count != 0)
             {
-                //Pour chaque elem erosion des plantes pas encore placé dans le current node
-                foreach (var erosion in currentNode.Erosions.Where(x => currentNode.PlantsToPlace.Contains(x.Key)))
+                foreach (var coa in currentNode.OccupyingActions)
                 {
-                    foreach (var point in erosion.Value.ErodePoints)
-                    {
-                        currentNode = ComputeBackTrack(point, erosion, currentNode);
-                    }
+                    Console.WriteLine("j k: " + coa.Point.X + " " + coa.Point.Y);
+                    ComputeBackTrack(coa, currentNode);
                 }
+                currentNode = currentNode.FinalPlacement;
             }
             return currentNode;
         }
 
-        private PlacementNode ComputeBackTrack(Point point, KeyValuePair<Plant, Erosion> erosion, PlacementNode currentNode)
+        //Compute final node
+        private void ComputeBackTrack(OccupyingAction coa, PlacementNode node)
         {
-            Console.WriteLine("j k: " + point.X + " " + point.Y);
+            var next = new PlacementNode(node, coa);//create new node place n update coa
+            Tree.Add(next);
+            node.FinalPlacement = next;
 
-           
-            //Create new node
-            var node = new PlacementNode(currentNode);
-            node.Place(erosion.Key, new Point(point.X, point.Y));
-            Tree.Add(node);
-            return null;
         }
 
         #endregion

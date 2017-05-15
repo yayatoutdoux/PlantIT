@@ -24,27 +24,6 @@ namespace ConsoleApplication1
         #endregion
 
         #region ctor
-        //Copy contructor
-        public PlacementNode(PlacementNode placementNode)
-        {
-            Garden = placementNode.Garden;
-            FinalPlacement = this;
-            placementNode.FinalPlacement = this;
-            placementNode.Childrens.Add(this);
-            Parents = new List<PlacementNode> { placementNode };
-            Childrens = new List<PlacementNode>();
-            PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
-            PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
-
-            Erosions = new Dictionary<Plant, Erosion>();
-            foreach (var erosion in placementNode.Erosions)
-                Erosions.Add(erosion.Key, new Erosion(erosion.Value));
-
-            Tree = placementNode.Tree;
-            IsAllErodesEmpties = placementNode.IsAllErodesEmpties;
-            Positions = new Dictionary<Plant, Point>(placementNode.Positions);
-        }
-
         //Create base PlacementNode
         public PlacementNode(Garden garden, List<Plant> plantList, PlacementTree tree)
         {
@@ -66,6 +45,140 @@ namespace ConsoleApplication1
             OccupyingActions = InitOccupyingActions();
         }
 
+        public PlacementNode(PlacementNode placementNode, OccupyingAction coa)
+        {
+            Garden = placementNode.Garden;
+            Borders = new List<Point>(Garden.Borders);
+            OccupyingActions = new List<OccupyingAction>(placementNode.OccupyingActions.Select(x => (OccupyingAction)x.Clone()));
+            FinalPlacement = this;
+
+            //Tree
+            placementNode.Childrens.Add(this);
+            Parents = new List<PlacementNode> { placementNode };
+            Childrens = new List<PlacementNode>();
+            Tree = placementNode.Tree;
+
+            //Plant
+            PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
+            PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
+            
+
+            Erosions = new Dictionary<Plant, Erosion>();
+            foreach (var erosion in placementNode.Erosions)
+                Erosions.Add(erosion.Key, new Erosion(erosion.Value));
+
+            IsAllErodesEmpties = placementNode.IsAllErodesEmpties;
+            Positions = new Dictionary<Plant, Point>(placementNode.Positions);
+            
+            Place(coa);
+        }
+
+        private void Place(OccupyingAction coa)
+        {
+            Positions.Add(coa.Plant, coa.Point);
+            PlantsPlaced.Add(coa.Plant);
+            PlantsToPlace.Remove(coa.Plant);
+
+            //Erosion
+            Erosions.Remove(coa.Plant);
+            UpdateErosions(coa.Plant, coa.Point);
+
+            //Update COA
+            UpdateCOAs(coa);
+        }
+
+        private void UpdateCOAs(OccupyingAction coa)
+        {
+            //remove border points
+            var borderDistancesToRemove = coa.Contacts.Where(x => x.Plant == null);
+            var borderPointToRemove = borderDistancesToRemove.Select(x => x.Point);
+            foreach (var pt in borderPointToRemove)
+            {
+                Borders.Remove(pt);
+            }
+            
+            //Modify existing coas
+            for (var i = OccupyingActions.Count - 1; i >= 0; i--)
+            {
+                //Delete coa where point is too close to placed, 
+
+                if (OccupyingActions[i].Plant == coa.Plant ||
+                    Math.Max(
+                        Math.Abs(OccupyingActions[i].Point.X - coa.Point.X),
+                        Math.Abs(OccupyingActions[i].Point.Y - coa.Point.Y)
+                    ) - (OccupyingActions[i].Plant.Model[0] + coa.Plant.Model[0] + 2) < 0)
+                {
+                    OccupyingActions.RemoveAt(i);
+                    continue;
+                }
+
+                //remove distance that are removed border
+                var removed = false;
+                for (var j = OccupyingActions[i].Distances.Count - 1; j >= 0; j--)
+                {
+                    if (borderPointToRemove.Contains(OccupyingActions[i].Distances[j].Point))
+                    {
+                        OccupyingActions[i].Distances.RemoveAt(j);
+                        removed = true;
+                    }
+                }
+
+                //add plant to distance
+                OccupyingActions[i].Distances.Add(new Distance(coa.Point, coa.Plant, OccupyingActions[i].Point, OccupyingActions[i].Plant));
+                
+                //remove empt coa and not angles
+                if (removed)
+                {
+                    OccupyingActions[i].Contacts = OccupyingActions[i].Distances.Where(x => x.Value == 0);
+                    if (!TestCOA(OccupyingActions[i]))
+                    {
+                        OccupyingActions.RemoveAt(i);
+                        continue;
+                    }
+                }
+            }
+
+            //Create new COAs
+            foreach (var erosion in Erosions)
+            {
+                var points = erosion.Value.ErodePoints.Where(x =>
+                    (Math.Abs(x.X - coa.Point.X) - (coa.Plant.Model[0] + 2 + erosion.Key.Model[0]) == 0
+                    || Math.Abs(x.Y - coa.Point.Y) - (coa.Plant.Model[0] + 2 + erosion.Key.Model[0]) == 0) && Math.Abs(x.X - coa.Point.X) - (coa.Plant.Model[0] + 2 + erosion.Key.Model[0]) != Math.Abs(x.Y - coa.Point.Y) - (coa.Plant.Model[0] + 2 + erosion.Key.Model[0])
+                );
+                foreach (var pt in points)
+                {
+                    var newCoa = new OccupyingAction(pt, erosion.Key, this);
+                    if (TestCOA(newCoa))
+                    {
+                        OccupyingActions.Add(newCoa);
+                    }
+                }
+            }
+        }
+
+        private bool TestCOA(OccupyingAction occupyingAction)
+        {
+            if (occupyingAction.Contacts.Count() <= 1)
+                return false;
+
+            var types = occupyingAction.Contacts.Select(x => x.SideType);
+            if (types.Contains(SideType.TOP))
+            {
+                if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
+                {
+                    return true;
+                }
+            }
+            if (types.Contains(SideType.BOTTOM))
+            {
+                if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private List<OccupyingAction> InitOccupyingActions()
         {
             var list = new List<OccupyingAction>();
@@ -84,26 +197,7 @@ namespace ConsoleApplication1
         private OccupyingAction ComputeCOA(KeyValuePair<Plant, Erosion> erosion, Point point)
         {
             var coa = new OccupyingAction(point, erosion.Key, this);
-            var contacts = coa.Distances.Where(x => x.Value == 0);
-            if (contacts.Count() <= 1)
-                return null;
-
-            var types = contacts.Select(x => x.SideType);
-            if (types.Contains(SideType.TOP))
-            {
-                if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
-                {
-                    return coa;
-                }
-            }
-            if (types.Contains(SideType.BOTTOM))
-            {
-                if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
-                {
-                    return coa;
-                }
-            }
-            return null;
+            return TestCOA(coa) ? coa : null;
         }
         #endregion
 
@@ -126,32 +220,21 @@ namespace ConsoleApplication1
         }
         #endregion
 
-        #region Place
-        //Place une plante dans un noeud de larbre : met à jour l'erosion de chaque plante de ce noeud
-        public void Place(Plant plant, Point position)
+        public bool FastTest()
         {
-            //Placement
-            Positions.Add(plant, position);
-
-            //Erosion
-            UpdateErosions(plant, position);
-
-            //Move plant
-            PlantsPlaced.Add(PlantsToPlace.First(x => x == plant));
-            PlantsToPlace.Remove(plant);
+            return true;
         }
-        
-        //Met à jour l'erosion avec nouvelle plant
+
         private void UpdateErosions(Plant plant, Point position)
         {
             var isAllErodesEmpties = true;
 
-            foreach (var erosion in Erosions.Where(x => PlantsToPlace.Contains(x.Key)))//Erode de chaque plants no placed
+            foreach (var erosion in Erosions)
             {
                 for (var i = 0; i < erosion.Value.ErodePoints.Count; i++)//Pour chaque point de l'erosion
                 {
                     var distance = Math.Max(
-                        Math.Abs(erosion.Value.ErodePoints[i].X - position.X), 
+                        Math.Abs(erosion.Value.ErodePoints[i].X - position.X),
                         Math.Abs(erosion.Value.ErodePoints[i].Y - position.Y)
                     );
 
@@ -164,18 +247,11 @@ namespace ConsoleApplication1
                         }
                     }
                 }
-
                 Erosions[erosion.Key].ErodePoints.RemoveAll(x => x == new Point(-1, -1));
                 if (erosion.Value.ErodePoints.Count > 0 && erosion.Key != plant)
                     isAllErodesEmpties = false;
             }
             IsAllErodesEmpties = isAllErodesEmpties;
-        }
-        #endregion
-
-        public bool FastTest()
-        {
-            return true;
         }
     }
 }
