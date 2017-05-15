@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using Emgu.CV;
@@ -19,8 +20,8 @@ namespace ConsoleApplication1
         public Point Point { get; set; }
         public Distance Dmin { get; set; }
         public double CavingDegree { get; set; }
-        public uint? CornerDegree { get; set; }
-        public uint? EdgesDegree { get; set; }
+        public uint CornerDegree { get; set; }
+        public uint EdgesDegree { get; set; }
         #endregion
 
         #region ctor
@@ -62,53 +63,41 @@ namespace ConsoleApplication1
             OccupyingAction coa = obj as OccupyingAction;
 
             //Cave deg
-            coa.CavingDegree = GetCavingDegree(coa);
-            CavingDegree = GetCavingDegree(this);
-            
-            if(Math.Abs(coa.CavingDegree - CavingDegree) < 0.01)
-                return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
-            return coa.CavingDegree.CompareTo(CavingDegree);
+            GetDegrees(coa);
+            GetDegrees(this);
+
+            if (Math.Abs(coa.CavingDegree - CavingDegree) < 0.01)
+            {
+                //Corner deg
+                if (coa.CornerDegree == CornerDegree)
+                {
+                    return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
+
+                }
+                return CornerDegree.CompareTo(coa.CornerDegree); ;
+
+            }
+            return CavingDegree.CompareTo(coa.CavingDegree);
         }
 
-        private double GetCavingDegree(OccupyingAction coa)
+        private void GetDegrees(OccupyingAction coa)
         {
             var types = coa.Contacts.Select(x => x.SideType);
+            var groups = types.GroupBy(x => x);
 
-            if (types.Contains(SideType.TOP))
+            coa.CavingDegree = groups.Count() > 2 ? 1 : 1 - coa.Distances.Min(x => x.Value) / ((coa.Plant.Model[0] * 2 + 1) * (coa.Plant.Model[0] * 2 + 1));
+            if (groups.Count() == 2)
             {
-                if (types.Contains(SideType.RIGHT))
-                {
-                    if (types.Contains(SideType.LEFT) || types.Contains(SideType.BOTTOM))
-                    {
-                        return 1;
-                    }
-                }
-                if (types.Contains(SideType.LEFT))
-                {
-                    if (types.Contains(SideType.RIGHT) || types.Contains(SideType.BOTTOM))
-                    {
-                        return 1;
-                    }
-                }
+                coa.CornerDegree = 1;
             }
-            if (types.Contains(SideType.BOTTOM))
+            else if (groups.Count() == 3)
             {
-                if (types.Contains(SideType.RIGHT))
-                {
-                    if (types.Contains(SideType.LEFT) || types.Contains(SideType.BOTTOM))
-                    {
-                        return 1;
-                    }
-                }
-                if (types.Contains(SideType.LEFT))
-                {
-                    if (types.Contains(SideType.RIGHT) || types.Contains(SideType.BOTTOM))
-                    {
-                        return 1;
-                    }
-                }
+                coa.CornerDegree = 2;
             }
-            return 1 - coa.Distances.Min(x => x.Value)/((coa.Plant.Model[0]*2 + 1)* (coa.Plant.Model[0] * 2 + 1));
+            else
+            {
+                coa.CornerDegree = 4;
+            }
         }
     }
 }

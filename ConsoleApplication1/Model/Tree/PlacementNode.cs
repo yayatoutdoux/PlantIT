@@ -155,25 +155,10 @@ namespace ConsoleApplication1
 
         private bool TestCOA(OccupyingAction occupyingAction)
         {
-            if (occupyingAction.Contacts.Count() <= 1)
-                return false;
-
-            var types = occupyingAction.Contacts.Select(x => x.SideType);
-            if (types.Contains(SideType.TOP))
-            {
-                if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
-                {
-                    return true;
-                }
-            }
-            if (types.Contains(SideType.BOTTOM))
-            {
-                if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return occupyingAction.Contacts
+                .Select(x => x.SideType)
+                .GroupBy(x => x)
+                .Count() > 1;
         }
 
         private List<OccupyingAction> InitOccupyingActions()
