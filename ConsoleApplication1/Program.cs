@@ -27,9 +27,9 @@ namespace ConsoleApplication1
             //SoilMap
             var soilMap = new Mat(new Size(50, 50), DepthType.Cv8U, 1);
             soilMap.SetTo(new MCvScalar(0));
-            for (var i = 3; i < 15; i++)
+            for (var i = 3; i < 14; i++)
             {
-                for (var j = 3; j < 15; j++)
+                for (var j = 3; j < 14; j++)
                 {
                     soilMap.SetValue(i, j, (byte)255);
                 }

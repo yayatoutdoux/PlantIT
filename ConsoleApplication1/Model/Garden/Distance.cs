@@ -52,7 +52,55 @@ namespace ConsoleApplication1
             Plant = plant;
             Value = Math.Max(Math.Abs(Point.X - point.X) - (plant.Model[0] + 2 + Plant.Model[0]), 0)
                 + Math.Max(Math.Abs(Point.Y - point.Y) - (plant.Model[0] + 2 + Plant.Model[0]), 0);
-            SideType = GetSideType(point, Point, Plant);
+            SideType = GetPlantSideType(point, Point, Plant);
+        }
+
+        private SideType GetPlantSideType(Point point, Point position, Plant plant)//point fix
+        {
+            var align = Math.Abs(position.X - point.X) == Math.Abs(position.Y - point.Y);
+            if (point.X > position.X)//left
+            {
+                if (point.Y - plant.Model[0] > position.Y)//top
+                {
+                    if (align)
+                    {
+                        return SideType.TOPLEFT;
+                    }
+                    return SideType.TOP;
+
+                }
+                if (point.Y + plant.Model[0] < position.Y)//bottom
+                {
+                    if (align)
+                    {
+                        return SideType.BOTTOMLEFT;
+                    }
+                    return SideType.BOTTOM;
+
+                }
+                return SideType.LEFT;
+
+            }
+
+            if (point.Y - plant.Model[0] > position.Y)//top
+            {
+                if (align)
+                {
+                    return SideType.TOPRIGHT;
+                }
+                return SideType.TOP;
+
+            }
+            if (point.Y + plant.Model[0] < position.Y)//bottom
+            {
+                if (align)
+                {
+                    return SideType.BOTTOMRIGHT;
+                }
+                return SideType.BOTTOM;
+
+            }
+            return SideType.RIGHT;
         }
 
         public SideType GetSideType(Point point, Point position, Plant coaPlant)
