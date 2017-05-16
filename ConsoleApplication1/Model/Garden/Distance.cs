@@ -37,21 +37,12 @@ namespace ConsoleApplication1
             SideType = GetSideType(point, border, plant);
         }
 
-        /*public Distance(OccupyingAction coa, OccupyingAction coaToModify)
-        {
-            Point = coa.Point;
-            Plant = coa.Plant;
-            Value = Math.Max(Math.Abs(coaToModify.Point.X - coa.Point.X) - (coa.Plant.Model[0] + 2 + coaToModify.Plant.Model[0]), 0) 
-                + Math.Max(Math.Abs(coaToModify.Point.Y - coa.Point.Y) - (coa.Plant.Model[0] + 2 + coaToModify.Plant.Model[0]), 0);
-            SideType = GetSideType(coaToModify.Point, coa.Point, coaToModify.Plant);
-        }*/
-
         public Distance(Point positon, Plant plant, Point point, Plant currentPlant)
         {
             Point = positon;
             Plant = plant;
-            Value = Math.Max(Math.Abs(Point.X - point.X) - (plant.Model[0] + 2 + Plant.Model[0]), 0)
-                + Math.Max(Math.Abs(Point.Y - point.Y) - (plant.Model[0] + 2 + Plant.Model[0]), 0);
+            Value = Math.Max(Math.Abs(Point.X - point.X) - (plant.Model[0] + 1 + currentPlant.Model[0]), 0)
+                + Math.Max(Math.Abs(Point.Y - point.Y) - (plant.Model[0] + 1 + currentPlant.Model[0]), 0);
             SideType = GetPlantSideType(point, Point, Plant);
         }
 

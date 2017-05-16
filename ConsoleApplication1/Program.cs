@@ -34,6 +34,13 @@ namespace ConsoleApplication1
                     soilMap.SetValue(i, j, (byte)255);
                 }
             }
+            for (var i = 14; i < 17; i++)
+            {
+                for (var j = 14; j < 17; j++)
+                {
+                    soilMap.SetValue(i, j, (byte)255);
+                }
+            }
 
             //Garden
             var garden = new Garden(soilMap);

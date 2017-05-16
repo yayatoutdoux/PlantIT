@@ -101,7 +101,7 @@ namespace ConsoleApplication1
                     Math.Max(
                         Math.Abs(OccupyingActions[i].Point.X - coa.Point.X),
                         Math.Abs(OccupyingActions[i].Point.Y - coa.Point.Y)
-                    ) - (OccupyingActions[i].Plant.Model[0] + coa.Plant.Model[0] + 2) < 0)
+                    ) - (OccupyingActions[i].Plant.Model[0] + coa.Plant.Model[0] + 1) < 0)
                 {
                     OccupyingActions.RemoveAt(i);
                     continue;
@@ -133,8 +133,9 @@ namespace ConsoleApplication1
             foreach (var erosion in Erosions)
             {
                 var points = erosion.Value.ErodePoints.Where(x =>
-                    (Math.Abs(x.X - coa.Point.X) - (coa.Plant.Model[0] + 1 + erosion.Key.Model[0]) == 0
-                    || Math.Abs(x.Y - coa.Point.Y) - (coa.Plant.Model[0] + 1 + erosion.Key.Model[0]) == 0) 
+                    Math.Max(Math.Abs(x.X - coa.Point.X) - (coa.Plant.Model[0] + 1 + erosion.Key.Model[0]), 0)
+                    + Math.Max(Math.Abs(x.Y - coa.Point.Y) - (coa.Plant.Model[0] + 1 + erosion.Key.Model[0]), 0) == 0
+
                     && Math.Abs(x.X - coa.Point.X) - (coa.Plant.Model[0] + 1 + erosion.Key.Model[0]) != 
                     Math.Abs(x.Y - coa.Point.Y) - (coa.Plant.Model[0] + 1 + erosion.Key.Model[0])
                 );
@@ -151,10 +152,34 @@ namespace ConsoleApplication1
 
         private bool TestCOA(OccupyingAction occupyingAction)
         {
-            return occupyingAction.Contacts
-                .Select(x => x.SideType)
+            var types = occupyingAction.Contacts
+                .Select(x => x.SideType);
+            var typesCount = types
                 .GroupBy(x => x)
-                .Count() > 1;
+                .Count();
+            if (typesCount > 1)
+            {
+                if (typesCount > 2)
+                    return true;
+                else
+                {
+                    if (types.Contains(SideType.TOP))
+                    {
+                        if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
+                        {
+                            return true;
+                        }
+                    }
+                    if (types.Contains(SideType.BOTTOM))
+                    {
+                        if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         private List<OccupyingAction> InitOccupyingActions()
