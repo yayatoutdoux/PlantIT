@@ -48,7 +48,7 @@ namespace ConsoleApplication1
                 Distances.Add(new Distance(plantPoint.Value, plantPoint.Key, point, plant));
             }
 
-            Contacts = Distances.Where(x => x.Value == 0);
+            Contacts = Distances.Where(x => x.Value == 0 && (int)x.SideType < 4);
         }
         #endregion
 

@@ -27,10 +27,6 @@ namespace ConsoleApplication1
             if (currentNode == null)
                 throw new Exception("First node cannot be null");
 
-            while (currentNode.FastTest() && currentNode.PlantsToPlace.Count != 0 && !currentNode.IsAllErodesEmpties)
-            {
-                
-            }
             return currentNode;
         }
     }
