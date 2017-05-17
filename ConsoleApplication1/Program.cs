@@ -14,9 +14,6 @@ namespace ConsoleApplication1
         static void Main(string[] args)
         {
             Test1();
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.ReadLine();
         }
 
         public static void Test1()

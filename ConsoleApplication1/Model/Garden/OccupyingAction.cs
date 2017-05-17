@@ -71,7 +71,11 @@ namespace ConsoleApplication1
                 //Corner deg
                 if (coa.CornerDegree == CornerDegree)
                 {
-                    return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
+                    if (coa.EdgesDegree == EdgesDegree)
+                    {
+                        return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
+                    }
+                    return EdgesDegree.CompareTo(coa.EdgesDegree); ;
 
                 }
                 return CornerDegree.CompareTo(coa.CornerDegree); ;
@@ -82,15 +86,14 @@ namespace ConsoleApplication1
 
         private void GetDegrees(OccupyingAction coa)
         {
-            var types = coa.Contacts.Select(x => x.SideType);
-            var groups = types.GroupBy(x => x);
+            var groups = coa.Contacts.GroupBy(x => x.SideType).Count();
 
-            coa.CavingDegree = groups.Count() > 2 ? 1 : 1 - coa.Distances.Min(x => x.Value) / ((coa.Plant.Model[0] * 2 + 1) * (coa.Plant.Model[0] * 2 + 1));
-            if (groups.Count() == 2)
+            coa.CavingDegree = groups > 2 ? 1 : 1 - coa.Distances.Min(x => x.Value) / ((coa.Plant.Model[0] * 2 + 1) * (coa.Plant.Model[0] * 2 + 1));
+            if (groups == 2)
             {
                 coa.CornerDegree = 1;
             }
-            else if (groups.Count() == 3)
+            else if (groups == 3)
             {
                 coa.CornerDegree = 2;
             }
@@ -98,6 +101,7 @@ namespace ConsoleApplication1
             {
                 coa.CornerDegree = 4;
             }
+            coa.EdgesDegree = (uint)coa.Contacts.GroupBy(x => x.Plant).Count();
         }
     }
 }
