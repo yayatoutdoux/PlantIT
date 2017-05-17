@@ -22,6 +22,7 @@ namespace ConsoleApplication1
         public double CavingDegree { get; set; }
         public uint CornerDegree { get; set; }
         public uint EdgesDegree { get; set; }
+        public double EdgesSizeDegree { get; set; }
         #endregion
 
         #region ctor
@@ -68,18 +69,19 @@ namespace ConsoleApplication1
 
             if (Math.Abs(coa.CavingDegree - CavingDegree) < 0.01)
             {
-                //Corner deg
                 if (coa.CornerDegree == CornerDegree)
                 {
                     if (coa.EdgesDegree == EdgesDegree)
                     {
-                        return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
+                        if (Math.Abs(coa.EdgesSizeDegree - EdgesSizeDegree) < 0.01)
+                        {
+                            return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
+                        }
+                        return EdgesSizeDegree.CompareTo(coa.EdgesSizeDegree); ;
                     }
                     return EdgesDegree.CompareTo(coa.EdgesDegree); ;
-
                 }
                 return CornerDegree.CompareTo(coa.CornerDegree); ;
-
             }
             return CavingDegree.CompareTo(coa.CavingDegree);
         }
@@ -102,6 +104,7 @@ namespace ConsoleApplication1
                 coa.CornerDegree = 4;
             }
             coa.EdgesDegree = (uint)coa.Contacts.GroupBy(x => x.Plant).Count();
+            coa.EdgesSizeDegree = (uint)coa.Contacts.Select(x => x.Plant).Count()/((coa.Plant.Model[0]*2 + 1 + 2)*4 - 4 - 4);
         }
     }
 }
