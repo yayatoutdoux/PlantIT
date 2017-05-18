@@ -20,6 +20,7 @@ namespace ConsoleApplication1
         {
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
+            var date = DateTime.Now;
 
             //SoilMap
             var soilMap = new Mat(new Size(50, 50), DepthType.Cv8U, 1);
@@ -27,13 +28,6 @@ namespace ConsoleApplication1
             for (var i = 3; i < 14; i++)
             {
                 for (var j = 3; j < 14; j++)
-                {
-                    soilMap.SetValue(i, j, (byte)255);
-                }
-            }
-            for (var i = 14; i < 17; i++)
-            {
-                for (var j = 14; j < 17; j++)
                 {
                     soilMap.SetValue(i, j, (byte)255);
                 }
@@ -79,7 +73,7 @@ namespace ConsoleApplication1
             }, garden);
 
             stopWatch.Stop();
-
+            var datek = DateTime.Now;
             var aa = new Mat(garden.SoilMap.Size, DepthType.Cv8U, 1);
             garden.SoilMap.CopyTo(aa);
             foreach (var posit in packing.FinalNode.Positions)

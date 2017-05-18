@@ -47,9 +47,7 @@ namespace ConsoleApplication1
 
             while (/*currentNode.FastTest() && */currentNode.PlantsToPlace.Count != 0 && currentNode.OccupyingActions.Count != 0)
             {
-                
-                 currentNode = ComputeBackTrack(currentNode);
-                
+                currentNode = ComputeBackTrack(currentNode);
             }
             return currentNode;
         }
@@ -58,27 +56,40 @@ namespace ConsoleApplication1
         private PlacementNode ComputeBackTrack(PlacementNode node)
         {
             var currentNode = node;
-            Tree.Add(currentNode);
-            while (/*currentNode.FastTest() && */currentNode.PlantsToPlace.Count != 0 && currentNode.OccupyingActions.Count != 0)
+            var allFinals = new Dictionary<PlacementNode, OccupyingAction>();
+            
+            foreach (var coa in currentNode.OccupyingActions.Skip(1))
             {
-                var bestCoa = currentNode.OccupyingActions.First();
-                foreach (var coa in currentNode.OccupyingActions.Skip(1))
-                {
-                    Console.WriteLine("j k: " + coa.Point.X + " " + coa.Point.Y);
+                allFinals.Add(GetFinalNode(currentNode, coa), coa);
+            }
+            Console.WriteLine("fzf");
 
+            //Best ?
+            var maxArea = allFinals.Keys.Max(x => x.PlantsPlaced.Sum(y => y.Model[0]));
+            var bestCoa = allFinals.First(x => x.Key.PlantsPlaced.Sum(y => y.Model[0]) == maxArea).Value;
+            return new PlacementNode(currentNode, bestCoa); ;
+
+        }
+
+        private PlacementNode GetFinalNode(PlacementNode currentNode, OccupyingAction oa)
+        {
+            var newNode = new PlacementNode(currentNode, oa);
+
+            while (/*currentNode.FastTest() && */newNode.PlantsToPlace.Count != 0 && newNode.OccupyingActions.Count != 0)
+            {
+                var bestCoa = newNode.OccupyingActions.First();
+
+                foreach (var coa in newNode.OccupyingActions.Skip(1))
+                {
                     if (coa.CompareTo(bestCoa) == 1)
                     {
                         bestCoa = coa;
                     }
                 }
-                currentNode = new PlacementNode(currentNode, bestCoa);
+                newNode = new PlacementNode(newNode, bestCoa);
                 Tree.Add(currentNode);
             }
-            //Best ?
-            if (node.PlantsPlaced.Sum(x => x.Model[0]) < currentNode.PlantsPlaced.Sum(x => x.Model[0]))
-                return currentNode;
-            return node;
-
+            return newNode;
         }
 
         #endregion
