@@ -19,6 +19,8 @@ namespace ConsoleApplication1
         public PlacementTree Tree { get; set; }
         public Garden Garden { get; set; }
         public List<OccupyingAction> OccupyingActions { get; set; }
+        public Dictionary<Plant, List<Interaction>> PlantInteractions { get; set; }
+        public Dictionary<Interaction, Effect> InteractionEffects { get; set; }
         #endregion
 
         #region ctor
@@ -30,6 +32,10 @@ namespace ConsoleApplication1
             Childrens = new List<PlacementNode>();
             Parents = new List<PlacementNode>();
 
+            //Interactions
+            InteractionEffects = new Dictionary<Interaction, Effect>();
+            PlantInteractions = InitPlantInteractionList(plantList);
+
             //Fill Plant list
             PlantsToPlace = plantList;
             PlantsPlaced = new List<Plant>();
@@ -40,6 +46,20 @@ namespace ConsoleApplication1
             Borders = garden.Borders;
             Erosions = InitErodes();
             OccupyingActions = InitOccupyingActions();
+        }
+
+        private Dictionary<Plant, List<Interaction>> InitPlantInteractionList(List<Plant> plantList)
+        {
+            var plantInteractions = new Dictionary<Plant, List<Interaction>>();
+            foreach (var plant in plantList)
+            {
+                plantInteractions.Add(plant, new List<Interaction>());
+                foreach (var inter in plant.Interactions)
+                {
+                    plantInteractions[plant].Add(inter);
+                }
+            }
+            return plantInteractions;
         }
 
         public PlacementNode(PlacementNode placementNode, OccupyingAction coa)
@@ -58,6 +78,8 @@ namespace ConsoleApplication1
             PlantsToPlace = new List<Plant>(placementNode.PlantsToPlace);
             PlantsPlaced = new List<Plant>(placementNode.PlantsPlaced);
             
+            //Interaction
+            PlantInteractions = PlantInteractions;
 
             Erosions = new Dictionary<Plant, Erosion>();
             foreach (var erosion in placementNode.Erosions)
@@ -66,6 +88,28 @@ namespace ConsoleApplication1
             Positions = new Dictionary<Plant, Point>(placementNode.Positions);
             
             Place(coa);
+        }
+
+        internal int GetInteractionScore()
+        {
+            var score = 0;
+            foreach (var plantToCompute in PlantsPlaced)
+            {
+                foreach (var otherPlant in PlantsPlaced.Where(x => x != plantToCompute))
+                {
+                    var distance = Math.Max(Math.Abs(Positions[plantToCompute].X - Positions[otherPlant].X) - (plantToCompute.Model[0] + 1 + otherPlant.Model[0]), 0)
+                        + Math.Max(Math.Abs(Positions[plantToCompute].Y - Positions[otherPlant].Y) - (plantToCompute.Model[0] + 1 + otherPlant.Model[0]), 0);
+                    foreach (var inter in plantToCompute.Interactions.Where(x => !x.IsGive))
+                    {
+                        if (otherPlant.Interactions.Where(x => x.IsGive).Select(x => x.Type).Contains(inter.Type))
+                        {
+                            if (distance < 4)
+                                score += (int)otherPlant.Interactions.First(x => x.IsGive && x.Type == inter.Type).DistanceFunction[distance];
+                        }
+                    }
+                }
+            }
+            return score;
         }
 
         private void Place(OccupyingAction coa)

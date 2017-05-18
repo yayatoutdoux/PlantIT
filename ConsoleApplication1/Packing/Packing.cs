@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Security.Permissions;
@@ -31,8 +32,13 @@ namespace ConsoleApplication1
         {
             Garden = garden;
             PlantList = plantList;
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             Tree = new PlacementTree(garden, plantList);
+            stopWatch.Stop();
 
+            Console.WriteLine(stopWatch.ElapsedMilliseconds + "ms");
+            Console.WriteLine(stopWatch.ElapsedMilliseconds / 1000 + "ks");
             //BackTrackPacking = new BackTrackPacking(Tree);
             FinalNode = ComputePacking();
         }
@@ -75,11 +81,17 @@ namespace ConsoleApplication1
                 Tree.Add(currentNode);
             }
             //Best ?
-            if (node.PlantsPlaced.Sum(x => x.Model[0]) < currentNode.PlantsPlaced.Sum(x => x.Model[0]))
+            //Inter
+            var scoreInter = node.GetInteractionScore();
+            var scoreInter2 = currentNode.GetInteractionScore();
+            
+            if (scoreInter*node.PlantsPlaced.Sum(x => x.Model[0]) < scoreInter2*currentNode.PlantsPlaced.Sum(x => x.Model[0]))
                 return currentNode;
             return node;
 
         }
+
+        
 
         #endregion
     }

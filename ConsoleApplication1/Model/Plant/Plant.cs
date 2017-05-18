@@ -17,11 +17,7 @@ namespace ConsoleApplication1
         //Other info
         public TimeLine TimeLine { get; set; } = null;
 
-        //Position and interaction with garden
-        public Garden Garden { get; set; } = null;
-        public Erosion Erosion { get; set; } = null;
-        public Point? Position { get; set; } = null;
-        public uint PositionOrder { get; set; } = 0;
+        public List<Interaction> Interactions { get; set; }
         #endregion
 
         #region ctor
