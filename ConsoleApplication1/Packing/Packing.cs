@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Security.Permissions;
@@ -31,8 +32,13 @@ namespace ConsoleApplication1
         {
             Garden = garden;
             PlantList = plantList;
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             Tree = new PlacementTree(garden, plantList);
+            stopWatch.Stop();
 
+            Console.WriteLine(stopWatch.ElapsedMilliseconds + "ms");
+            Console.WriteLine(stopWatch.ElapsedMilliseconds / 1000 + "ks");
             //BackTrackPacking = new BackTrackPacking(Tree);
             FinalNode = ComputePacking();
         }
@@ -91,6 +97,8 @@ namespace ConsoleApplication1
             }
             return newNode;
         }
+
+        
 
         #endregion
     }

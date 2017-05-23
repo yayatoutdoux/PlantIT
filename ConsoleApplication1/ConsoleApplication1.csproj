@@ -86,6 +86,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MatExtension.cs" />
+    <Compile Include="Model\Erode\Effect.cs" />
+    <Compile Include="Model\Erode\Interaction.cs" />
     <Compile Include="Model\Garden\Distance.cs" />
     <Compile Include="Model\Garden\OccupyingAction.cs" />
     <Compile Include="Model\Garden\Garden.cs" />
