@@ -9,7 +9,7 @@ using Emgu.CV.Structure;
 
 namespace ConsoleApplication1
 {
-    public class OccupyingAction : ICloneable, IComparable
+    public class OccupyingAction : ICloneable
     {
         #region properties
 
@@ -58,10 +58,8 @@ namespace ConsoleApplication1
             return MemberwiseClone();
         }
 
-        public int CompareTo(object obj)
+        public int CompareTo(OccupyingAction coa, PlacementNode node)
         {
-            if (obj == null) return 1;
-            OccupyingAction coa = obj as OccupyingAction;
 
             //Cave deg
             GetDegrees(coa);
@@ -73,11 +71,11 @@ namespace ConsoleApplication1
                 {
                     if (coa.EdgesDegree == EdgesDegree)
                     {
-                        if (Math.Abs(coa.EdgesSizeDegree - EdgesSizeDegree) < 0.01)
+                        if (Plant.Model[0] == coa.Plant.Model[0])
                         {
-                            return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
+                            
                         }
-                        return EdgesSizeDegree.CompareTo(coa.EdgesSizeDegree); ;
+                        return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
                     }
                     return EdgesDegree.CompareTo(coa.EdgesDegree); ;
                 }
@@ -103,8 +101,7 @@ namespace ConsoleApplication1
             {
                 coa.CornerDegree = 4;
             }
-            coa.EdgesDegree = (uint)coa.Contacts.GroupBy(x => x.Plant).Count();
-            coa.EdgesSizeDegree = (uint)coa.Contacts.Select(x => x.Plant).Count()/((coa.Plant.Model[0]*2 + 1 + 2)*4 - 4 - 4);
+            coa.EdgesDegree = (uint)(coa.Contacts.GroupBy(x => x.Plant).Count() + coa.Contacts.Where(x => x.Plant == null).GroupBy(x => x.SideType).Count());
         }
     }
 }

@@ -72,8 +72,13 @@ namespace ConsoleApplication1
 
             //Best ?
             var maxArea = allFinals.Keys.Max(x => x.PlantsPlaced.Sum(y => y.Model[0]));
-            var bestCoa = allFinals.First(x => x.Key.PlantsPlaced.Sum(y => y.Model[0]) == maxArea).Value;
-            return new PlacementNode(currentNode, bestCoa); ;
+            var bestsCoa = allFinals.Where(x => x.Key.PlantsPlaced.Sum(y => y.Model[0]) == maxArea);
+            if(bestsCoa.Count() == 1)
+                return new PlacementNode(currentNode, bestsCoa.First().Value); ;
+            var maxInter = bestsCoa.Max(x => x.Key.GetInteractionScore());
+            var bestOfbest = bestsCoa.First(x => x.Key.GetInteractionScore() == maxInter);
+            return new PlacementNode(currentNode, bestOfbest.Value); ;
+
 
         }
 
