@@ -54,7 +54,7 @@ namespace ConsoleApplication1
             return MemberwiseClone();
         }
 
-        public int CompareTo(OccupyingAction coa, PlacementNode node)
+        /*public int CompareTo(OccupyingAction coa, PlacementNode node)
         {
             //Cave deg
             GetDegrees(coa);
@@ -77,10 +77,10 @@ namespace ConsoleApplication1
                 return CavingDegree.CompareTo(coa.CavingDegree);
             }
             return node.GetInteractionScoreCoa(this).CompareTo(node.GetInteractionScoreCoa(coa));
-        }//
+        }*/
 
         //placem
-        /*public int CompareTo(OccupyingAction coa, PlacementNode node)
+        public int CompareTo(OccupyingAction coa, PlacementNode node)
         {
             //Cave deg
             GetDegrees(coa);
@@ -103,7 +103,7 @@ namespace ConsoleApplication1
                 return CornerDegree.CompareTo(coa.CornerDegree); ;
             }
             return CavingDegree.CompareTo(coa.CavingDegree);
-        }*/
+        }
 
         private void GetDegrees(OccupyingAction coa)
         {
