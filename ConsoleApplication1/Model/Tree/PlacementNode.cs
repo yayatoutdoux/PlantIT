@@ -236,7 +236,7 @@ namespace ConsoleApplication1
             var typesCount = types
                 .GroupBy(x => x)
                 .Count();
-            if (typesCount > 0)
+            if (typesCount > 1)
             {
                 return true;
             }
