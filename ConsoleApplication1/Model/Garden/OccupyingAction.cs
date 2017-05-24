@@ -109,7 +109,11 @@ namespace ConsoleApplication1
         {
             var groups = coa.Contacts.GroupBy(x => x.SideType).Count();
 
-            coa.CavingDegree = groups > 2 ? 1 : 1 - coa.Distances.Min(x => x.Value) / ((coa.Plant.Model[0] * 2 + 1) * (coa.Plant.Model[0] * 2 + 1));
+            coa.CavingDegree = groups > 2 ? 1 : 1 - coa.Distances.Min(x => x.Value) / ((coa.Plant.Model[0] * 2 + 1));
+            if (groups == 1)
+            {
+                coa.CornerDegree = 0;
+            }
             if (groups == 2)
             {
                 coa.CornerDegree = 1;

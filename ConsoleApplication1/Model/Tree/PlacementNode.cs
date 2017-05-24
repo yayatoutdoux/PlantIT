@@ -238,25 +238,7 @@ namespace ConsoleApplication1
                 .Count();
             if (typesCount > 1)
             {
-                if (typesCount > 2)
-                    return true;
-                else
-                {
-                    if (types.Contains(SideType.TOP))
-                    {
-                        if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
-                        {
-                            return true;
-                        }
-                    }
-                    if (types.Contains(SideType.BOTTOM))
-                    {
-                        if (types.Contains(SideType.RIGHT) || types.Contains(SideType.LEFT))
-                        {
-                            return true;
-                        }
-                    }
-                }
+                return true;
             }
             return false;
         }
