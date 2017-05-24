@@ -77,7 +77,7 @@ namespace ConsoleApplication1
                 return CavingDegree.CompareTo(coa.CavingDegree);
             }
             return node.GetInteractionScoreCoa(this).CompareTo(node.GetInteractionScoreCoa(coa));
-        }
+        }//
 
         //placem
         /*public int CompareTo(OccupyingAction coa, PlacementNode node)
