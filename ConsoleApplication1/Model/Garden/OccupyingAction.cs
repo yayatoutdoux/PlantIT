@@ -78,6 +78,32 @@ namespace ConsoleApplication1
             return node.GetInteractionScoreCoa(this).CompareTo(node.GetInteractionScoreCoa(coa));
         }
 
+        //placem
+        /*public int CompareTo(OccupyingAction coa, PlacementNode node)
+        {
+            //Cave deg
+            GetDegrees(coa);
+            GetDegrees(this);
+            
+            if (Math.Abs(coa.CavingDegree - CavingDegree) < 0.01)
+            {
+                if (coa.CornerDegree == CornerDegree)
+                {
+                    if (coa.EdgesDegree == EdgesDegree)
+                    {
+                        if (Plant.Model[0] == coa.Plant.Model[0])
+                        {
+                            return node.GetInteractionScoreCoa(this).CompareTo(node.GetInteractionScoreCoa(coa));
+                        }
+                        return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
+                    }
+                    return EdgesDegree.CompareTo(coa.EdgesDegree); ;
+                }
+                return CornerDegree.CompareTo(coa.CornerDegree); ;
+            }
+            return CavingDegree.CompareTo(coa.CavingDegree);
+        }*/
+
         private void GetDegrees(OccupyingAction coa)
         {
             var groups = coa.Contacts.GroupBy(x => x.SideType).Count();
