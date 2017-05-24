@@ -19,11 +19,9 @@ namespace ConsoleApplication1
         public Garden Garden { get; set; }
         public PlacementTree Tree { get; set; }
 
-        //Backtrack
-        public BackTrackPacking BackTrackPacking { get; set; }
-
         //Result
         public PlacementNode FinalNode { get; set; }
+        public PlacementNode FinalNodeInter { get; set; }
 
         #endregion
 
@@ -32,15 +30,10 @@ namespace ConsoleApplication1
         {
             Garden = garden;
             PlantList = plantList;
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
             Tree = new PlacementTree(garden, plantList);
-            stopWatch.Stop();
-
-            Console.WriteLine(stopWatch.ElapsedMilliseconds + "ms");
-            Console.WriteLine(stopWatch.ElapsedMilliseconds / 1000 + "ks");
-            //BackTrackPacking = new BackTrackPacking(Tree);
+            FinalNodeInter = null;
             FinalNode = ComputePacking();
+
         }
         #endregion
 
@@ -66,7 +59,10 @@ namespace ConsoleApplication1
             
             foreach (var coa in currentNode.OccupyingActions.Skip(1))
             {
-                allFinals.Add(GetFinalNode(currentNode, coa), coa);
+                var finalNode = GetFinalNode(currentNode, coa);
+                allFinals.Add(finalNode, coa);
+                if (FinalNodeInter == null || FinalNodeInter.GetInteractionScore() < finalNode.GetInteractionScore())
+                    FinalNodeInter = finalNode;
             }
             Console.WriteLine("fzf");
 
@@ -78,21 +74,18 @@ namespace ConsoleApplication1
             var maxInter = bestsCoa.Max(x => x.Key.GetInteractionScore());
             var bestOfbest = bestsCoa.First(x => x.Key.GetInteractionScore() == maxInter);
             return new PlacementNode(currentNode, bestOfbest.Value); ;
-
-
         }
 
         private PlacementNode GetFinalNode(PlacementNode currentNode, OccupyingAction oa)
         {
             var newNode = new PlacementNode(currentNode, oa);
-
             while (/*currentNode.FastTest() && */newNode.PlantsToPlace.Count != 0 && newNode.OccupyingActions.Count != 0)
             {
                 var bestCoa = newNode.OccupyingActions.First();
 
                 foreach (var coa in newNode.OccupyingActions.Skip(1))
                 {
-                    if (coa.CompareTo(bestCoa) == 1)
+                    if (coa.CompareTo(bestCoa, newNode) == 1)
                     {
                         bestCoa = coa;
                     }
@@ -102,9 +95,6 @@ namespace ConsoleApplication1
             }
             return newNode;
         }
-
-        
-
         #endregion
     }
 }

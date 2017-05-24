@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
 
 namespace ConsoleApplication1
 {
@@ -48,20 +49,6 @@ namespace ConsoleApplication1
             OccupyingActions = InitOccupyingActions();
         }
 
-        private Dictionary<Plant, List<Interaction>> InitPlantInteractionList(List<Plant> plantList)
-        {
-            var plantInteractions = new Dictionary<Plant, List<Interaction>>();
-            foreach (var plant in plantList)
-            {
-                plantInteractions.Add(plant, new List<Interaction>());
-                foreach (var inter in plant.Interactions)
-                {
-                    plantInteractions[plant].Add(inter);
-                }
-            }
-            return plantInteractions;
-        }
-
         public PlacementNode(PlacementNode placementNode, OccupyingAction coa)
         {
             Garden = placementNode.Garden;
@@ -89,6 +76,50 @@ namespace ConsoleApplication1
             
             Place(coa);
         }
+        #endregion
+
+        #region Interaction
+        private Dictionary<Plant, List<Interaction>> InitPlantInteractionList(List<Plant> plantList)
+        {
+            var plantInteractions = new Dictionary<Plant, List<Interaction>>();
+            foreach (var plant in plantList)
+            {
+                plantInteractions.Add(plant, new List<Interaction>());
+                foreach (var inter in plant.Interactions)
+                {
+                    plantInteractions[plant].Add(inter);
+                }
+            }
+            return plantInteractions;
+        }
+
+        public int GetInteractionScoreCoa(OccupyingAction coa)
+        {
+            var score = 0;
+            foreach (var otherPlant in PlantsPlaced)
+            {
+                var distance = Math.Max(Math.Abs(coa.Point.X - Positions[otherPlant].X) - (coa.Plant.Model[0] + 1 + otherPlant.Model[0]), 0)
+                    + Math.Max(Math.Abs(coa.Point.Y - Positions[otherPlant].Y) - (coa.Plant.Model[0] + 1 + otherPlant.Model[0]), 0);
+                foreach (var inter in coa.Plant.Interactions.Where(x => !x.IsGive))
+                {
+                    if (otherPlant.Interactions.Where(x => x.IsGive).Select(x => x.Type).Contains(inter.Type))
+                    {
+                        if (distance < 4)
+                            score += (int)otherPlant.Interactions.First(x => x.IsGive && x.Type == inter.Type).DistanceFunction[distance];
+                    }
+                }
+                foreach (var inter in otherPlant.Interactions.Where(x => !x.IsGive))
+                {
+                    if (coa.Plant.Interactions.Where(x => x.IsGive).Select(x => x.Type).Contains(inter.Type))
+                    {
+                        if (distance < 4)
+                            score += (int)coa.Plant.Interactions.First(x => x.IsGive && x.Type == inter.Type).DistanceFunction[distance];
+                    }
+                }
+            }
+
+            return score;
+        }
 
         internal int GetInteractionScore()
         {
@@ -111,7 +142,9 @@ namespace ConsoleApplication1
             }
             return score;
         }
+        #endregion
 
+        #region Place
         private void Place(OccupyingAction coa)
         {
             Positions.Add(coa.Plant, coa.Point);
@@ -125,7 +158,9 @@ namespace ConsoleApplication1
             //Update COA
             UpdateCOAs(coa);
         }
+        #endregion
 
+        #region COA
         private void UpdateCOAs(OccupyingAction coa)
         {
             //remove border points
@@ -253,7 +288,7 @@ namespace ConsoleApplication1
             }
             return erosions;
         }
-        #endregion
+
         private void UpdateErosions(Plant plant, Point position)
         {
             foreach (var erosion in Erosions)
@@ -277,6 +312,26 @@ namespace ConsoleApplication1
                 Erosions[erosion.Key].ErodePoints.RemoveAll(x => x == new Point(-1, -1));
             }
         }
+        #endregion
+
+        #region Print
+        internal Mat GetPositionMat()
+        {
+            var aa = new Mat(Garden.SoilMap.Size, DepthType.Cv8U, 1);
+            Garden.SoilMap.CopyTo(aa);
+            foreach (var posit in this.Positions)
+            {
+                for (var i = posit.Value.X - posit.Key.Model[0]; i < posit.Value.X - posit.Key.Model[0] + posit.Key.Model[0] * 2 + 1; i++)
+                {
+                    for (var j = posit.Value.Y - posit.Key.Model[0]; j < posit.Value.Y - posit.Key.Model[0] + posit.Key.Model[0] * 2 + 1; j++)
+                    {
+                        aa.SetValue(i, j, (byte)(posit.Key.Id / 255));
+                    }
+                }
+            }
+            return aa;
+        }
+        #endregion
     }
 }
 

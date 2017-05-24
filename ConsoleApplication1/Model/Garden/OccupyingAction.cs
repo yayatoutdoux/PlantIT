@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
 
 namespace ConsoleApplication1
 {
@@ -60,7 +56,6 @@ namespace ConsoleApplication1
 
         public int CompareTo(OccupyingAction coa, PlacementNode node)
         {
-
             //Cave deg
             GetDegrees(coa);
             GetDegrees(this);
@@ -73,7 +68,7 @@ namespace ConsoleApplication1
                     {
                         if (Plant.Model[0] == coa.Plant.Model[0])
                         {
-                            
+                            return node.GetInteractionScoreCoa(this).CompareTo(node.GetInteractionScoreCoa(coa));
                         }
                         return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
                     }
