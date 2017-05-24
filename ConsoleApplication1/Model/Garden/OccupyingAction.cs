@@ -59,24 +59,23 @@ namespace ConsoleApplication1
             //Cave deg
             GetDegrees(coa);
             GetDegrees(this);
-
-            if (Math.Abs(coa.CavingDegree - CavingDegree) < 0.01)
+            if (node.GetInteractionScoreCoa(this) == node.GetInteractionScoreCoa(coa))
             {
-                if (coa.CornerDegree == CornerDegree)
+                if (Math.Abs(coa.CavingDegree - CavingDegree) < 0.01)
                 {
-                    if (coa.EdgesDegree == EdgesDegree)
+                    if (coa.CornerDegree == CornerDegree)
                     {
-                        if (Plant.Model[0] == coa.Plant.Model[0])
+                        if (coa.EdgesDegree == EdgesDegree)
                         {
-                            return node.GetInteractionScoreCoa(this).CompareTo(node.GetInteractionScoreCoa(coa));
+                            return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
                         }
-                        return Plant.Model[0].CompareTo(coa.Plant.Model[0]);
+                        return EdgesDegree.CompareTo(coa.EdgesDegree); ;
                     }
-                    return EdgesDegree.CompareTo(coa.EdgesDegree); ;
+                    return CornerDegree.CompareTo(coa.CornerDegree); ;
                 }
-                return CornerDegree.CompareTo(coa.CornerDegree); ;
+                return CavingDegree.CompareTo(coa.CavingDegree);
             }
-            return CavingDegree.CompareTo(coa.CavingDegree);
+            return node.GetInteractionScoreCoa(this).CompareTo(node.GetInteractionScoreCoa(coa));
         }
 
         private void GetDegrees(OccupyingAction coa)
