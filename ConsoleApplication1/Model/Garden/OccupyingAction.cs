@@ -59,6 +59,7 @@ namespace ConsoleApplication1
             //Cave deg
             GetDegrees(coa);
             GetDegrees(this);
+            //II
             if (node.GetInteractionScoreCoa(this) == node.GetInteractionScoreCoa(coa))
             {
                 if (Math.Abs(coa.CavingDegree - CavingDegree) < 0.01)
